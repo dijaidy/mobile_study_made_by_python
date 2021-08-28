@@ -8,11 +8,12 @@ import xmltodict
 
 # 검색어에 따라 결과 출력
 def load_aladin_book(grade): 
+    need_list = {'link', 'priceStandard', 'cover'}
     input_word = input("검색어 입력> ")
-    input_choice = input("선택사항 입력(학년, 과목):")
+    input_choice = input("선택사항 입력(과목):")
     query = "&query=" + urllib.parse.quote(input_word)
     url = (
-       "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbsmartapple031950001%s&MaxResults=10&CategoryId=76000&output=JS&Version=20131101"
+       "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbsmartapple031950001%s&MaxResults=20&CategoryId=76000&output=JS&Version=20131101"
     % query
     )
 
@@ -23,7 +24,18 @@ def load_aladin_book(grade):
     if rescode == 200:
         respose_body = response.read()
         decode_data = respose_body.decode("utf-8")
-        print(decode_data)
+        json_data = json.loads(decode_data)
+        searched_list = json_data['item']
+        
+        searching_result={}     #최종적으로 띄워줄 정보
+        for book in searched_list:
+            book_dict={}        #하나의 책에 대한 정보모음
+            for index in need_list:
+                book_dict[index]=book[index]
+            searching_result[book['title']] = book_dict
+
+
+        print(searching_result)
         return decode_data
 
 
@@ -58,8 +70,10 @@ subject_id_dict = {
 
 
 def load_edunet_imformation(grade): #grade정수형
-    input_word = input('과목을 입력해주세요')
+    need_list={'kywrd', 'url', 'thum_img_full_path'}
+    input_word = input('과목을 입력해주세요: ')
     subject_ID = subject_id_dict[input_word]
+
    
     url_edunet = "http://down.edunet4u.net/KEDNCM/OPENAPI/SUBCONT/nedu_sub_cont_UNIT_LEARNING_CLSS0000057446_%s.xml" % subject_ID
     request = urllib.request.Request(url_edunet)
@@ -71,7 +85,18 @@ def load_edunet_imformation(grade): #grade정수형
         decoded_data = response_body.decode("utf-8")
         xml_parse = xmltodict.parse(decoded_data)  # string인 xml 파싱
         xml_dict = json.loads(json.dumps(xml_parse))
-        print(xml_dict)  # 결과를 출력한다
+
+        searched_list=xml_dict['root']['contents']['row']
+
+        searching_result={}     #최종적으로 띄워줄 정보
+        for learning_content in searched_list:
+            Learning_content_dict={}        #하나의 컨텐츠에 대한 정보모음
+            
+            for index in need_list:
+                Learning_content_dict[index]=learning_content[index]
+            searching_result[learning_content['title']] = Learning_content_dict
+
+        print(searching_result)  # 결과를 출력한다
 
 
 # class Book:
