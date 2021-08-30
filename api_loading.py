@@ -2,7 +2,7 @@
 import urllib.request
 import json
 import xmltodict
-import csv
+import datetime
 
 # 검색어에 따라 결과 출력
 class api_loading:
@@ -123,7 +123,7 @@ class api_loading:
         school_code_list = self.return_school_code()
         print(tuple(school_code_list))
         url_neis_api = (
-            "https://open.neis.go.kr/hub/misTimetable?KEY=c14de8bbaf5d4856abb43baeb6383d30&Type=json&plndex=1&pSize=100&ATPT_OFCDC_SC_CODE=%s&SD_SCHUL_CODE=%s"
+            "https://open.neis.go.kr/hub/misTimetable?KEY=c14de8bbaf5d4856abb43baeb6383d30&Type=json&plndex=1&pSize=100&ATPT_OFCDC_SC_CODE=%s&SD_SCHUL_CODE=%s&"
             % tuple(school_code_list)
         )
 
@@ -135,7 +135,8 @@ class api_loading:
             respose_body = response.read()
             decode_data = respose_body.decode("utf-8")
             json_data = json.loads(decode_data)
-
+            json_data
+            time = datetime.now()
             print(json_data)
 
 
