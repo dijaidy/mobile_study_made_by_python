@@ -126,6 +126,9 @@ class 교재선택_window:
         window.title("교재선택")
         window.geometry("400x800")
 
+    def manufacture_book_dict():  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
+        pass
+
 
 class 찜한교재현황_window:
     def __init__(self):
