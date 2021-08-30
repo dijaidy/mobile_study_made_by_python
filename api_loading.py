@@ -2,6 +2,7 @@
 import urllib.request
 import json
 import xmltodict
+import csv
 
 # 검색어에 따라 결과 출력
 class api_loading:
@@ -105,3 +106,37 @@ class api_loading:
         else:
             print("에듀넷 api 입력 오류")
             return 0
+
+    def return_school_code(self):  # 학교 이름 입력 시 학교 코드 리턴
+        input_file = "학교_코드_dict.json"
+
+        school_name = input("학교 이름을 입력하세요 >")
+
+        with open(input_file, "r", encoding="utf-8") as in_file:
+            json_data = json.load(in_file)
+            school_code_list = json_data[school_name]
+
+        print(school_code_list)
+        return school_code_list
+
+    def load_school_timetable(self):
+        school_code_list = self.return_school_code()
+        print(tuple(school_code_list))
+        url_neis_api = (
+            "https://open.neis.go.kr/hub/misTimetable?KEY=c14de8bbaf5d4856abb43baeb6383d30&Type=json&plndex=1&pSize=100&ATPT_OFCDC_SC_CODE=%s&SD_SCHUL_CODE=%s"
+            % tuple(school_code_list)
+        )
+
+        request = urllib.request.Request(url_neis_api)
+        response = urllib.request.urlopen(request)
+        rescode = response.getcode()
+
+        if rescode == 200:
+            respose_body = response.read()
+            decode_data = respose_body.decode("utf-8")
+            json_data = json.loads(decode_data)
+
+            print(json_data)
+
+
+api_loading().load_school_timetable()
