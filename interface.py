@@ -1,4 +1,6 @@
 from tkinter import *
+import urllib
+import api_loading
 
 # 폰트 설정
 title_font = ("배달의민족 주아", 30)
@@ -122,12 +124,25 @@ class start_window:
 class 교재선택_window:
     def __init__(self):
         # 창 설정
-        window = Tk()
-        window.title("교재선택")
-        window.geometry("400x800")
+        self.window = Tk()
+        self.window.title("교재선택")
+        self.window.geometry("400x800")
 
-    def manufacture_book_dict():  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
-        pass
+        self.search_entry=Entry(self.window, text="교재명: ", font=menu_font)   #검색어입력창
+        self.search_entry.place(relx=0, relwidth=4/5, rely=1/5, height=50)
+
+        self.search_button=Button(self.window, text="검색하기", font=menu_font, 
+            command=self.manufacture_book_dict)
+        self.search_button.place(relx=4/5, relwidth=1/5, rely=1/5, height=50)
+    
+    def bring_keyword(self):    #검색어 입력창에서 받은 입력어 반환
+        return self.search_entry.get()
+
+    def manufacture_book_dict(self):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
+        searching_result=api_loading.loading_aladin_book(self.bring_keyword)
+        for book_title in searching_result.keys():
+            request=urllib.request.Request(searching_result[book_title]['cover'])
+
 
 
 class 찜한교재현황_window:
