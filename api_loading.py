@@ -2,7 +2,7 @@
 import urllib.request
 import json
 import xmltodict
-import datetime
+from datetime import datetime, timedelta
 
 # 검색어에 따라 결과 출력
 class api_loading:
@@ -119,11 +119,21 @@ class api_loading:
         print(school_code_list)
         return school_code_list
 
-    def load_school_timetable(self):
+    def load_school_timetable(self):  # 학교, 학년, 반 입력 시 시간표 반환(바뀐 시간표까지 적용)
         school_code_list = self.return_school_code()
-        print(tuple(school_code_list))
+        today = datetime.today()
+        weekday = today.weekday()
+        from_day = today - timedelta(days=weekday)
+        from_ymd = from_day.strftime("%Y%m%d")
+        to_day = today + timedelta(days=4 - weekday)
+        to_ymd = to_day.strftime("%Y%m%d")
+        print((from_ymd, to_ymd))
+        grade = input("학년 입력> ")
+        class_nm = input("반 입력> ")
+        input_list = [from_ymd, to_ymd, grade, class_nm]
+        school_code_list.extend(input_list)
         url_neis_api = (
-            "https://open.neis.go.kr/hub/misTimetable?KEY=c14de8bbaf5d4856abb43baeb6383d30&Type=json&plndex=1&pSize=100&ATPT_OFCDC_SC_CODE=%s&SD_SCHUL_CODE=%s&"
+            "https://open.neis.go.kr/hub/misTimetable?KEY=c14de8bbaf5d4856abb43baeb6383d30&Type=json&plndex=1&pSize=100&ATPT_OFCDC_SC_CODE=%s&SD_SCHUL_CODE=%s&TI_FROM_YMD=%s&TI_TO_YMD=%s&GRADE=%s&CLASS_NM=%s"
             % tuple(school_code_list)
         )
 
@@ -135,9 +145,26 @@ class api_loading:
             respose_body = response.read()
             decode_data = respose_body.decode("utf-8")
             json_data = json.loads(decode_data)
-            json_data
-            time = datetime.now()
-            print(json_data)
+
+            timetable = {}
+            weekday_list = ["월", "화", "수", "목", "금"]
+            json_data = json_data["misTimetable"][1]["row"]
+
+            # 요일 계산을 위한 변수
+            prior_ymd = 0
+            weekday_index = -1
+
+            for lesson in json_data:
+                this_ymd = lesson["ALL_TI_YMD"]
+                if this_ymd != prior_ymd:
+                    prior_ymd = this_ymd
+                    weekday_index += 1
+                    timetable[weekday_list[weekday_index]] = {}
+                timetable[weekday_list[weekday_index]][lesson["PERIO"]] = lesson["ITRT_CNTNT"]
+
+            print(timetable)
+
+            return timetable
 
 
 api_loading().load_school_timetable()
