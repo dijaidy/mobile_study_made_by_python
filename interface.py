@@ -128,20 +128,32 @@ class 교재선택_window:
         self.window.title("교재선택")
         self.window.geometry("400x800")
 
+        self.book_title_key=0   #책정보 딕션너리의 key를 keys()함수로 리스트로 만든 것에 쓰이는 인덱스값
+
         self.search_entry=Entry(self.window, text="교재명: ", font=menu_font)   #검색어입력창
-        self.search_entry.place(relx=0, relwidth=4/5, rely=1/5, height=50)
+        self.search_entry.place(relx=0, relwidth=4/5, rely=0, height=50)
 
         self.search_button=Button(self.window, text="검색하기", font=menu_font, 
             command=self.manufacture_book_dict)
-        self.search_button.place(relx=4/5, relwidth=1/5, rely=1/5, height=50)
+        self.search_button.place(relx=4/5, relwidth=1/5, rely=0, height=50)
+
+        self.next_button=Button(self.window, text="다음 검색결과 보기", font=menu_font, command=self.show_book_information)
+        self.next_button.place(relx=1/2, rely=1)
     
     def bring_keyword(self):    #검색어 입력창에서 받은 입력어 반환
         return self.search_entry.get()
 
     def manufacture_book_dict(self):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
+        self.book_title_key=0
         searching_result=api_loading.loading_aladin_book(self.bring_keyword)
-        for book_title in searching_result.keys():
-            request=urllib.request.Request(searching_result[book_title]['cover'])
+        book_title=searching_result.keys()
+        picture_url=urllib.request.Request(searching_result[book_title[self.book_title_key]]['cover'])
+        picture_label=Label(self.window, image=urllib.request.urlopen(picture_url))
+    
+    def show_book_information(self):
+        pass
+
+
 
 
 
