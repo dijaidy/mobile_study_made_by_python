@@ -1,11 +1,14 @@
 from tkinter import *
-import urllib
-import api_loading
+import urllib.request
+from api_loading import API_loading
+from PIL import ImageTk, Image
 
 # 폰트 설정
 title_font = ("배달의민족 주아", 30)
 menu_font = ("배달의민족 주아", 15)
 submenu_font = ("배달의민족 주아", 17)
+
+api_loading_source = API_loading()
 
 
 class start_window:
@@ -127,34 +130,48 @@ class 교재선택_window:
         self.window = Tk()
         self.window.title("교재선택")
         self.window.geometry("400x800")
+        self.book_title_key = 0  # 책정보 딕션너리의 key를 keys()함수로 리스트로 만든 것에 쓰이는 인덱스값
+        self.search_entry = Entry(self.window, font=menu_font)  # 검색어입력창
+        self.search_entry.place(relx=0, relwidth=4 / 5, rely=0, height=50)
 
-        self.book_title_key=0   #책정보 딕션너리의 key를 keys()함수로 리스트로 만든 것에 쓰이는 인덱스값
+        self.search_button = Button(
+            self.window, text="검색하기", font=menu_font, command=self.manufacture_book_dict
+        )
+        self.search_button.place(relx=4 / 5, relwidth=1 / 5, rely=1 / 5, height=50)
 
-        self.search_entry=Entry(self.window, text="교재명: ", font=menu_font)   #검색어입력창
-        self.search_entry.place(relx=0, relwidth=4/5, rely=0, height=50)
+        self.next_button = Button(
+            self.window, text="다음 검색결과 보기", font=menu_font, command=self.show_book_information
+        )
+        self.next_button.place(relx=1 / 2, rely=1)
 
-        self.search_button=Button(self.window, text="검색하기", font=menu_font, 
-            command=self.manufacture_book_dict)
-        self.search_button.place(relx=4/5, relwidth=1/5, rely=0, height=50)
+        self.book = Label(self.window, text="할로")
+        self.book.place(relx=1 / 2, rely=1 / 2, relheight=1 / 2, relwidth=1 / 2)
 
-        self.next_button=Button(self.window, text="다음 검색결과 보기", font=menu_font, command=self.show_book_information)
-        self.next_button.place(relx=1/2, rely=1)
-    
-    def bring_keyword(self):    #검색어 입력창에서 받은 입력어 반환
-        return self.search_entry.get()
-
-    def manufacture_book_dict(self):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
-        self.book_title_key=0
-        searching_result=api_loading.loading_aladin_book(self.bring_keyword)
-        book_title=searching_result.keys()
-        picture_url=urllib.request.Request(searching_result[book_title[self.book_title_key]]['cover'])
-        picture_label=Label(self.window, image=urllib.request.urlopen(picture_url))
-    
     def show_book_information(self):
         pass
 
+        for subject, id in api_loading_source.return_subject_id().items():
+            print("Key:%s\tValue:%s" % (subject, id))
 
+        self.window.resizable(width=False, height=False)
+        self.window.mainloop()
 
+    def bring_keyword(self):  # 검색어 입력창에서 받은 입력어 반환
+        keyword = self.search_entry.get()
+        return keyword
+
+    def manufacture_book_dict(self):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
+        searching_result = api_loading_source.load_aladin_book(self.bring_keyword())
+        print(searching_result)
+        for book_title in searching_result:
+            request = urllib.request.Request(searching_result[book_title]["cover"])
+            image_file = urllib.request.urlopen(request)
+        image = PhotoImage(file="sources\미오.png", master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
+        img = ImageTk.PhotoImage(Image.open("download.png"))
+        self.book.config(image=image)
+        self.window.resizable(width=False, height=False)
+        self.window.mainloop()
+        print("여까지도")
 
 
 class 찜한교재현황_window:

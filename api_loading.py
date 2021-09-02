@@ -5,39 +5,42 @@ import xmltodict
 from datetime import datetime, timedelta
 
 # 검색어에 따라 결과 출력
-class api_loading:
+class API_loading:
     def __init__(self):
-        subject_id_dict = {
+        self.subject_id_dict = {
             "중학 1학년 공통 과학 1": "CLSS0000068529",
             "중학 1학년 공통 국어": "CLSS0000068510",
-            "중학 1학년 공통 기술·가정 ⓛ": "CLSS0000068694",
-            "중학 1학년 공통 도덕 ⓛ": "CLSS0000068623",
-            "중학 1학년 공통 미술 ⓛ": "CLSS0000068739",
-            "중학 1학년 공통 사회 ⓛ": "CLSS0000068583",
+            "중학 1학년 공통 기술·가정 1": "CLSS0000068694",
+            "중학 1학년 공통 도덕 1": "CLSS0000068623",
+            "중학 1학년 공통 미술 1": "CLSS0000068739",
+            "중학 1학년 공통 사회 1": "CLSS0000068583",
             "중학 1학년 공통 수학 1": "CLSS0000068558",
             "중학 1학년 공통 영어 1": "CLSS0000068757",
-            "중학 1학년 공통 음악 ⓛ": "CLSS0000068725",
-            "중학 1학년 공통 체육 ⓛ/②": "CLSS0000068637",
+            "중학 1학년 공통 음악 1": "CLSS0000068725",
+            "중학 1학년 공통 체육 1/2": "CLSS0000068637",
             "중학 2학년 공통 과학": "CLSS0000077433",
             "중학 2학년 공통 국어": "CLSS0000079323",
-            "중학 2학년 공통 기술가정 ②": "CLSS0000079523",
-            "중학 2학년 공통 미술 ②": "CLSS0000079996",
+            "중학 2학년 공통 기술가정 2": "CLSS0000079523",
+            "중학 2학년 공통 미술 2": "CLSS0000079996",
             "중학 2학년 공통 사회": "CLSS0000077950",
             "중학 2학년 공통 수학": "CLSS0000077664",
-            "중학 2학년 공통 역사 ①": "CLSS0000058812",
+            "중학 2학년 공통 역사 1": "CLSS0000058812",
             "중학 2학년 공통 영어": "CLSS0000081204",
-            "중학 3학년 공통 과학 ③": "CLSS0000059357",
-            "중학 3학년 공통 국어 ⑤": "CLSS0000058989",
-            "중학 3학년 공통 국어 ⑥": "CLSS0000059091",
-            "중학 3학년 공통 수학 ③": "CLSS0000059184",
-            "중학 3학년 공통 역사 ②": "CLSS0000059293",
-            "중학 3학년 공통 영어 ③": "CLSS0000059439",
+            "중학 3학년 공통 과학 3": "CLSS0000059357",
+            "중학 3학년 공통 국어 5": "CLSS0000058989",
+            "중학 3학년 공통 국어 6": "CLSS0000059091",
+            "중학 3학년 공통 수학 3": "CLSS0000059184",
+            "중학 3학년 공통 역사 2": "CLSS0000059293",
+            "중학 3학년 공통 영어 3": "CLSS0000059439",
         }
 
-    def load_aladin_book(self):  # 검색하고 싶은 책을 입력받아 검색결과 리턴
+    def return_subject_id(self):
+        return self.subject_id_dict
+
+    def load_aladin_book(self, keyword):  # 검색하고 싶은 책을 입력받아 검색결과 리턴
         need_list = {"link", "priceStandard", "cover"}
-        input_word = input("검색어 입력> ")
-        input_choice = input("선택사항 입력(과목):")
+        input_word = keyword
+        input_choice = 0
         query = "&query=" + urllib.parse.quote(input_word)
         url = (
             "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbsmartapple031950001%s&MaxResults=20&CategoryId=76000&output=JS&Version=20131101"
@@ -61,6 +64,7 @@ class api_loading:
                     book_dict[index] = book[index]
                 searching_result[book["title"]] = book_dict
 
+            print(searching_result)
             return searching_result
 
     def choose():
@@ -167,4 +171,4 @@ class api_loading:
             return timetable
 
 
-api_loading().load_school_timetable()
+API_loading().return_subject_id()
