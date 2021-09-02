@@ -6,8 +6,14 @@ import os
 from PIL import ImageTk
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from information_management import api_loading
-from start_window import title_font, menu_font, submenu_font, api_loading_source
+from information_management.api_loading import API_loading
+
+# 폰트 설정
+title_font = ("배달의민족 주아", 30)
+menu_font = ("배달의민족 주아", 15)
+submenu_font = ("배달의민족 주아", 17)
+
+api_loading_source = API_loading()
 
 
 # sub_menu 윈도우
