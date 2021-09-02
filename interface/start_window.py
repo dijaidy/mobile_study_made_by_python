@@ -8,6 +8,14 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from information_management.api_loading import API_loading
 
 from 내교재_찜하기.교재선택_window import 교재선택_window
+from 내교재_찜하기.찜한교재목록_window import 찜한교재목록_window
+from 공부계획.공부계획_window import 공부계획_window
+from 공부방.오늘의공부_window import 오늘의공부_window
+from 공부방.학교수업복습_window import 학교수업복습_window
+from 커뮤니티.스터디그룹_window import 스터디그룹_window
+from 커뮤니티.학교정보_window import 학교정보_window
+from 나의성과.나의성취도_window import 나의성취도_window
+from 나의성과.랭킹_window import 랭킹_window
 
 # 폰트 설정
 title_font = ("배달의민족 주아", 30)
@@ -62,7 +70,7 @@ class start_window:
             self.window, text="교재선택 >", font=submenu_font, command=self.show_교재선택_window
         )
         self.sub_menu_2 = Button(
-            self.window, text="찜한교재현황 >", font=submenu_font, command=self.show_교재선택_window
+            self.window, text="찜한교재목록 >", font=submenu_font, command=self.show_교재선택_window
         )
         self.sub_menu_1.place(y=400, height=50, relx=0, relwidth=2 / 5)
         self.sub_menu_2.place(y=470, height=50, relx=0, relwidth=2 / 5)
@@ -73,15 +81,15 @@ class start_window:
     # sub_menu_띄우는 함수 + sub_menu 해당 윈도우 띄우는 함수
     def show_내교재찜하기_submenu(self):
         self.sub_menu_1["text"] = "교재선택 >"
-        self.sub_menu_2["text"] = "찜한교재현황 >"
+        self.sub_menu_2["text"] = "찜한교재목록 >"
         self.sub_menu_1["command"] = self.show_교재선택_window
-        self.sub_menu_2["command"] = self.show_찜한교재현황_window
+        self.sub_menu_2["command"] = self.show_찜한교재목록_window
 
     def show_교재선택_window(self):
         교재선택_window()
 
-    def show_찜한교재현황_window(self):
-        찜한교재현황_window()
+    def show_찜한교재목록_window(self):
+        찜한교재목록_window()
 
     def show_공부계획_submenu(self):
         self.sub_menu_1["text"] = "공부계획 >"
@@ -129,72 +137,7 @@ class start_window:
         랭킹_window()
 
 
-# sub_menu 윈도우
-
-
-class 찜한교재현황_window:
-    def __init__(self):
-        # 창 설정
-        self.window = Tk()
-        self.window.title("찜한교재현황")
-        self.window.geometry("400x800")
-
-
-class 공부계획_window:
-    def __init__(self):
-        # 창 설정
-        self.window = Tk()
-        self.window.title("공부계획")
-        self.window.geometry("400x800")
-
-
-class 오늘의공부_window:
-    def __init__(self):
-        # 창 설정
-        self.window = Tk()
-        self.window.title("오늘의공부")
-        self.window.geometry("400x800")
-
-
-class 학교수업복습_window:
-    def __init__(self):
-        # 창 설정
-        self.window = Tk()
-        self.window.title("학교수업복습")
-        self.window.geometry("400x800")
-
-
-class 스터디그룹_window:
-    def __init__(self):
-        # 창 설정
-        self.window = Tk()
-        self.window.title("스터디그룹")
-        self.window.geometry("400x800")
-
-
-class 학교정보_window:
-    def __init__(self):
-        # 창 설정
-        self.window = Tk()
-        self.window.title("학교정보")
-        self.window.geometry("400x800")
-
-
-class 나의성취도_window:
-    def __init__(self):
-        # 창 설정
-        self.window = Tk()
-        self.window.title("나의성취도")
-        self.window.geometry("400x800")
-
-
-class 랭킹_window:
-    def __init__(self):
-        # 창 설정
-        self.window = Tk()
-        self.window.title("랭킹")
-        self.window.geometry("400x800")
-
+# sub_menu 윈도우 모두 모듈화시킴
 
 if __name__ == "__main__":
     start_window()
