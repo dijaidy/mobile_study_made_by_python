@@ -112,7 +112,7 @@ class API_loading:
             return 0
 
     def return_school_code(self):  # 학교 이름 입력 시 학교 코드 리턴
-        input_file = "학교_코드_dict.json"
+        input_file = "information\학교_코드_dict.json"
 
         school_name = input("학교 이름을 입력하세요 >")
 

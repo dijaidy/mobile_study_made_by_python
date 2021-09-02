@@ -1,15 +1,19 @@
 from tkinter import *
 import urllib.request
-from api_loading import API_loading
+import sys
 import os
 from PIL import ImageTk
+
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from information_management import api_loading
+
 
 # 폰트 설정
 title_font = ("배달의민족 주아", 30)
 menu_font = ("배달의민족 주아", 15)
 submenu_font = ("배달의민족 주아", 17)
 
-api_loading_source = API_loading()
+api_loading_source = api_loading.API_loading()
 
 
 class start_window:
@@ -171,11 +175,8 @@ class 교재선택_window:
         #
 
         # 교재 이미지
-        background_image = PhotoImage(file="download.png", master=self.window)
         self.book = Label(self.window)
         self.book.place(relx=0, y=50, height=(800 - 50) - 100, relwidth=1)
-
-        self.book.config(image=background_image)
 
         # 학교수업복습에 사용할 거
         # for subject, id in api_loading_source.return_subject_id().items():
@@ -209,10 +210,10 @@ class 교재선택_window:
         # curl "이미지 주소" > "저장 될 이미지 파일 이름"
         url = searching_result[title_list[교재선택_window.image_index]]["cover"]
 
-        os.system("curl " + url + " > 교재선택_image_file.jpg")
+        os.system("curl " + url + " > sources\교재선택_image_file.jpg")
 
         image = ImageTk.PhotoImage(
-            file="교재선택_image_file.jpg", master=self.window
+            file="sources\교재선택_image_file.jpg", master=self.window
         )  # 새창에서 그림띄우면 마스터 정의 꼭!
 
         self.book.config(image=image)
@@ -283,4 +284,7 @@ class 랭킹_window:
         self.window.geometry("400x800")
 
 
-start_window()
+if __name__ == "__main__":
+    start_window()
+else:
+    print("임포트 되어 사용 됨:", __name__)
