@@ -3,9 +3,12 @@ from tkinter import *
 import urllib.request
 import sys
 import os
-from PIL import ImageTk
+from PIL import Image, ImageTk
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+sys.path.append(
+    os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__)))))
+)
 from information_management.api_loading import API_loading
 
 # 폰트 설정
@@ -60,11 +63,13 @@ class 교재선택_window:
         self.choose_my_textbook = Button(self.window, text="내 교재 찜하기", font=menu_font)
         self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
 
-        #
-
         # 교재 이미지
-        self.book = Label(self.window)
-        self.book.place(relx=0, y=50, height=(800 - 50) - 100, relwidth=1)
+        self.book_image = Label(self.window)
+        self.book_image.place(x=25, y=75, height=250, width=200)
+
+        # 교재 타이틀
+        self.book_title = Label(self.window, font=submenu_font)
+        self.book_title.place(x=250)
 
         # 학교수업복습에 사용할 거
         # for subject, id in api_loading_source.return_subject_id().items():
@@ -100,9 +105,13 @@ class 교재선택_window:
 
         os.system("curl " + url + " > image_sources\교재선택_image_file.jpg")
 
-        image = ImageTk.PhotoImage(
-            file="image_sources\교재선택_image_file.jpg", master=self.window
-        )  # 새창에서 그림띄우면 마스터 정의 꼭!
+        # 이미지 크기 조정
+        size_adjusting_image = Image.open("image_sources\교재선택_image_file.jpg")
+        image = size_adjusting_image.resize(
+            (size_adjusting_image.size[0] * 2, size_adjusting_image.size[1] * 2), Image.ANTIALIAS
+        )
 
-        self.book.config(image=image)
+        resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
+
+        self.book.config(image=resized_image)
         self.window.mainloop()
