@@ -65,11 +65,19 @@ class 교재선택_window:
 
         # 교재 이미지
         self.book_image = Label(self.window)
-        self.book_image.place(x=25, y=75, height=250, width=200)
+        self.book_image.place(x=200 - 100, y=75, height=250, width=200)
 
         # 교재 타이틀
-        self.book_title = Label(self.window, font=submenu_font)
-        self.book_title.place(x=250)
+        book_info_text = """\
+안녕하세요
+저는
+김용환입니다.        
+            \
+            """
+        self.book_title = Text(
+            self.window, font=submenu_font, text=book_info_text, justify=LEFT, padx=1, pady=1
+        )
+        self.book_title.place(x=25, y=350, height=(800 - 75 - 250) - 100 - 50, width=400 - 50)
 
         # 학교수업복습에 사용할 거
         # for subject, id in api_loading_source.return_subject_id().items():
@@ -113,5 +121,5 @@ class 교재선택_window:
 
         resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
 
-        self.book.config(image=resized_image)
+        self.book_image.config(image=resized_image)
         self.window.mainloop()
