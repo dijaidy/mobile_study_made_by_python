@@ -103,7 +103,7 @@ class API_loading:
                 for index in need_list:
                     Learning_content_dict[index] = learning_content[index]
                 searching_result[learning_content["title"]] = Learning_content_dict
-
+            print(searching_result)
             return searching_result  # 결과를 출력한다
 
         # 받아오는데 실패하면
@@ -169,6 +169,3 @@ class API_loading:
             print(timetable)
 
             return timetable
-
-
-API_loading().return_subject_id()

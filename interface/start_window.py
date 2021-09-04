@@ -13,7 +13,7 @@ from 공부계획.공부계획_window import 공부계획_window
 from 공부방.오늘의공부_window import 오늘의공부_window
 from 공부방.학교수업복습_window import 학교수업복습_window
 from 커뮤니티.스터디그룹_window import 스터디그룹_window
-from 커뮤니티.학교정보_window import 학교정보_window
+from 커뮤니티.유저정보_window import 학교정보_window
 from 나의성과.나의성취도_window import 나의성취도_window
 from 나의성과.랭킹_window import 랭킹_window
 
@@ -61,7 +61,7 @@ class start_window:
         self.menu_커뮤니티.place(y=150, height=50, relx=3 / 5, relwidth=1 / 5)
 
         self.menu_현재성과 = Button(
-            self.window, text="현재성과", font=menu_font, command=self.show_현재성과_submenu
+            self.window, text="나의 성과", font=menu_font, command=self.show_현재성과_submenu
         )
         self.menu_현재성과.place(y=150, height=50, relx=4 / 5, relwidth=1 / 5)
 
@@ -114,7 +114,7 @@ class start_window:
 
     def show_커뮤니티_submenu(self):
         self.sub_menu_1["text"] = "스터디 그룹 >"
-        self.sub_menu_2["text"] = "학교정보 >"
+        self.sub_menu_2["text"] = "유저 정보 >"
         self.sub_menu_1["command"] = self.show_스터디그룹_window
         self.sub_menu_2["command"] = self.show_학교정보_window
 
@@ -125,7 +125,7 @@ class start_window:
         학교정보_window()
 
     def show_현재성과_submenu(self):
-        self.sub_menu_1["text"] = "나의 성취도 >"
+        self.sub_menu_1["text"] = "학습 통계 >"
         self.sub_menu_2["text"] = "랭킹 >"
         self.sub_menu_1["command"] = self.show_나의성취도_window
         self.sub_menu_2["command"] = self.show_랭킹_window

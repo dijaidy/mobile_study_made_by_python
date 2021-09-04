@@ -4,24 +4,29 @@ import urllib.request
 import sys
 import os
 from PIL import Image, ImageTk
+import webbrowser
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 sys.path.append(
     os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__)))))
 )
 from information_management.api_loading import API_loading
+from information_management.user_information import 찜한교재_manage_user_information
 
 # 폰트 설정
-title_font = ("배달의민족 주아", 30)
+title_font = ("배달의민족 주아", 23)
 menu_font = ("배달의민족 주아", 15)
 submenu_font = ("배달의민족 주아", 17)
 
 api_loading_source = API_loading()
+manage_user_information = 찜한교재_manage_user_information()
 
 
 # sub_menu 윈도우
 class 교재선택_window:
     image_index = 0
+    present_book = {}
+    present_book_title = ""
 
     def __init__(self):
         # 창 설정
@@ -60,24 +65,29 @@ class 교재선택_window:
         self.prior_button.place(relx=0, relwidth=1 / 2, y=800 - 50, height=50)
 
         # 내 교재 찜하기 버튼
-        self.choose_my_textbook = Button(self.window, text="내 교재 찜하기", font=menu_font)
+        self.choose_my_textbook = Button(
+            self.window, text="내 교재 찜하기", font=menu_font, command=self.choose_my_book
+        )
         self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
 
         # 교재 이미지
-        self.book_image = Label(self.window)
-        self.book_image.place(x=200 - 100, y=75, height=250, width=200)
+        self.book_image = Label(self.window, borderwidth=2, relief="sunken", text="자료 없음")
+        self.book_image.place(x=25, y=75, height=250, width=200)
 
         # 교재 타이틀
-        book_info_text = """\
-안녕하세요
-저는
-김용환입니다.        
-            \
-            """
-        self.book_title = Text(
-            self.window, font=submenu_font, text=book_info_text, justify=LEFT, padx=1, pady=1
+        self.book_title = Message(self.window, font=title_font)
+        self.book_title.place(x=0, y=350, height=200, width=400)
+
+        # 교재 정보
+        self.book_info = Label(self.window, font=menu_font, justify=LEFT, padx=1, pady=1)
+        self.book_info.place(x=25, y=550, height=150, width=400 - 50)
+
+        self.open_web_button = Button(
+            self.window, font=menu_font, text="교재\n웹사이트\n오픈", padx=1, pady=1
         )
-        self.book_title.place(x=25, y=350, height=(800 - 75 - 250) - 100 - 50, width=400 - 50)
+        self.open_web_button.place(x=250, y=75, width=125, height=125)
+
+        # 링크
 
         # 학교수업복습에 사용할 거
         # for subject, id in api_loading_source.return_subject_id().items():
@@ -109,7 +119,10 @@ class 교재선택_window:
 
         # curl 요청
         # curl "이미지 주소" > "저장 될 이미지 파일 이름"
-        url = searching_result[title_list[교재선택_window.image_index]]["cover"]
+        book = searching_result[title_list[교재선택_window.image_index]]
+        교재선택_window.present_book = book
+        교재선택_window.present_book_title = title_list[교재선택_window.image_index]
+        url = book["cover"]
 
         os.system("curl " + url + " > image_sources\교재선택_image_file.jpg")
 
@@ -121,5 +134,26 @@ class 교재선택_window:
 
         resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
 
-        self.book_image.config(image=resized_image)
+        self.book_image.config(image=resized_image, text="")
+
+        # 타이틀 수정
+        book_title_text = title_list[교재선택_window.image_index]
+        self.book_title.config(text=book_title_text)
+
+        # 정보 수정
+        book_info_text = "가격: %s원" % book["priceStandard"]
+        self.book_info.config(text=book_info_text)
+
+        # 링크 수정
+        def open_web():
+            webbrowser.open(book["link"])
+
+        self.open_web_button.config(command=open_web)
+
         self.window.mainloop()
+
+    def choose_my_book(self):
+        manage_user_information.plus_chosen_book_dict(
+            교재선택_window.present_book_title, 교재선택_window.present_book
+        )
+        manage_user_information.save_chosen_book_to_file()
