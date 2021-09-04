@@ -12,7 +12,6 @@ class 찜한교재_manage_user_information:  # 교재등록 밑 관리
 
     def save_chosen_book_to_file(self):  # 교재정보를 파일에 저장
         with open("information\chosen_book_file.json", "w", encoding="UTF-8") as out_file:
-            print(self.chosen_book)
             json.dump(self.chosen_book, out_file, ensure_ascii=False)
 
     def call_chosen_book_from_file(self):  # 파일 불러오기
