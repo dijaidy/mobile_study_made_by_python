@@ -169,3 +169,6 @@ class API_loading:
             print(timetable)
 
             return timetable
+
+
+API_loading().load_school_timetable()
