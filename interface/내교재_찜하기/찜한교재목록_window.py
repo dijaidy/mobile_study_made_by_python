@@ -19,4 +19,4 @@ class 찜한교재목록_window:
         self.window.resizable(False, False)
         frame = Frame(self.window)
         scrollbar = Scrollbar(frame)
-        scrollbar.pack(self="right", fill="y")
+        scrollbar.pack(side="right", fill="y")

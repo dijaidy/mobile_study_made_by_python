@@ -1,6 +1,7 @@
 from tkinter import *
 
-class 나의성취도_window:
+
+class 학습통계_window:
     def __init__(self):
         # 창 설정
         self.window = Tk()

@@ -13,7 +13,7 @@ from 공부방.오늘의공부_window import 오늘의공부_window
 from 공부방.학교수업복습_window import 학교수업복습_window
 from 커뮤니티.스터디그룹_window import 스터디그룹_window
 from 커뮤니티.유저정보_window import 학교정보_window
-from 나의성과.나의성취도_window import 나의성취도_window
+from 나의성과.학습통계_window import 학습통계_window
 from 나의성과.랭킹_window import 랭킹_window
 
 # 폰트 설정
@@ -69,7 +69,7 @@ class start_window:
             self.window, text="교재선택 >", font=submenu_font, command=self.show_교재선택_window
         )
         self.sub_menu_2 = Button(
-            self.window, text="찜한교재목록 >", font=submenu_font, command=self.show_교재선택_window
+            self.window, text="찜한교재목록 >", font=submenu_font, command=self.show_찜한교재목록_window
         )
         self.sub_menu_1.place(y=400, height=50, relx=0, relwidth=2 / 5)
         self.sub_menu_2.place(y=470, height=50, relx=0, relwidth=2 / 5)
@@ -126,11 +126,11 @@ class start_window:
     def show_현재성과_submenu(self):
         self.sub_menu_1["text"] = "학습 통계 >"
         self.sub_menu_2["text"] = "랭킹 >"
-        self.sub_menu_1["command"] = self.show_나의성취도_window
+        self.sub_menu_1["command"] = self.show_학습통계_window
         self.sub_menu_2["command"] = self.show_랭킹_window
 
-    def show_나의성취도_window(self):
-        나의성취도_window()
+    def show_학습통계_window(self):
+        학습통계_window()
 
     def show_랭킹_window(self):
         랭킹_window()
