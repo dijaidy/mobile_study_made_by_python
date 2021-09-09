@@ -7,7 +7,8 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 sys.path.append(
     os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__)))))
 )
-from information_management.user_information import 찜한교재_manage_information
+from information_management.user_information import 찜한교재_manage_user_information
+
 
 class 찜한교재목록_window:
     def __init__(self):
@@ -16,6 +17,6 @@ class 찜한교재목록_window:
         self.window.title("찜한교재현황")
         self.window.geometry("400x800")
         self.window.resizable(False, False)
-        frame=Frame(self.window)
-        scrollbar=Scrollbar(frame)
+        frame = Frame(self.window)
+        scrollbar = Scrollbar(frame)
         scrollbar.pack(self="right", fill="y")
