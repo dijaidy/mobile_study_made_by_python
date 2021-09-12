@@ -38,7 +38,7 @@ class API_loading:
         return self.subject_id_dict
 
     def load_aladin_book(self, keyword):  # 검색하고 싶은 책을 입력받아 검색결과 리턴
-        need_list = {"link", "priceStandard", "cover"}
+        need_list = {"link", "priceStandard", "cover", "description"}
         input_word = keyword
         input_choice = 0
         query = "&query=" + urllib.parse.quote(input_word)
