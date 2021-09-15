@@ -64,7 +64,6 @@ class API_loading:
                     book_dict[index] = book[index]
                 searching_result[book["title"]] = book_dict
 
-            print(searching_result)
             return searching_result
 
     def choose():
