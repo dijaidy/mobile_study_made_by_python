@@ -1,5 +1,6 @@
 # 교재선택_window
 from tkinter import *
+from typing import List
 import urllib.request
 import sys
 import os
@@ -12,6 +13,7 @@ sys.path.append(
 )
 from information_management.api_loading import API_loading
 from information_management.user_information import 찜한교재_manage_user_information
+from information_management.user_information import 과목_manage_user_information
 
 # 폰트 설정
 title_font = ("배달의민족 주아", 23)
@@ -19,7 +21,8 @@ menu_font = ("배달의민족 주아", 15)
 submenu_font = ("배달의민족 주아", 17)
 
 api_loading_source = API_loading()
-manage_user_information = 찜한교재_manage_user_information()
+찜한교재 = 찜한교재_manage_user_information()
+과목 = 과목_manage_user_information()
 
 
 # sub_menu 윈도우
@@ -287,9 +290,54 @@ class 교재선택_window:
 
     # 내교재 찜하기 버튼
     def choose_my_book(self):
-        manage_user_information.plus_chosen_book_dict(
-            교재선택_window.present_book_title, 교재선택_window.present_book
+
+        choose_option(self.window)
+
+        찜한교재.plus_chosen_book_dict(교재선택_window.present_book_title, 교재선택_window.present_book)
+        찜한교재.save_chosen_book_to_file()
+
+
+class choose_option:
+    subject_list = []
+    subject_list = 과목.call_subject_list_from_file()
+
+    def __init__(self, window):
+        self.background = Label(window, relief=RIDGE)  # 옵션설정의 배경은 x= 0~400, y=500~700
+        self.background.place(x=0, y=450, width=400, height=250)
+
+        # 제목
+        self.title = Label(window, text="교재 찜하기 옵션", font=submenu_font, justify=CENTER)
+        self.title.place(x=5, y=460, width=390, height=40)
+
+        # 과목
+        self.subject = Label(window, text="과목", font=menu_font)
+        self.subject.place(x=20, y=500, width=50, height=50)
+
+        # 과목 리스트
+        self.subject_listbox = Listbox(
+            window, selectmode="extended", height=0, listvariable=choose_option.subject_list
         )
-        choose_option_frame = Frame(self.window, width=400, height=200, relief="ridge")  # 500~700
-        choose_option_frame.place(x=0, y=500)
-        manage_user_information.save_chosen_book_to_file()
+        for i in range(0, len(choose_option.subject_list)):
+            self.subject_listbox.insert(i, choose_option.subject_list[i])
+        self.subject_listbox.place(x=100, y=500, width=100, height=100)
+
+        # 과목 추가 버튼
+        self.subject_add_button = Button(
+            window,
+            text="과목 추가",
+            font=("배달의민족 주아", 12),
+            justify=CENTER,
+            command=lambda: self.add_subject(self.subject_to_add.get()),
+        )
+        self.subject_add_button.place(x=20, y=610, width=70, height=50)
+
+        # 추가할 과목 이름
+        self.subject_to_add = Entry(window, font=("배달의민족 주아", 12))
+        self.subject_to_add.place(x=110, y=610, width=80, height=50)
+
+    def add_subject(self, subject):
+        self.subject_listbox.insert(len(choose_option.subject_list), subject)
+        choose_option.subject_list.append(subject)
+        과목.update_subject(choose_option.subject_list)
+        과목.save_subject_list_to_file()
+        print("성공")
