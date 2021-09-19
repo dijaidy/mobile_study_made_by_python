@@ -1,7 +1,6 @@
 # 데이터 파일로 저장이나 불러오는 활동 총괄
 import json
 
-
 class 찜한교재_manage_user_information:  # 교재등록 밑 관리
     def __init__(self):
         self.chosen_book = {}
@@ -36,3 +35,11 @@ class 과목_manage_user_information:  # 유저의 학습 과목 관리
     def call_subject_list_from_file(self):  # 파일 불러오기
         with open("information\subject_list_file.json", "r", encoding="UTF-8") as out_file:
             return json.load(out_file)["subject"]
+
+class 공부계획_manage_user_information:                       #공부계획한 것들 저장
+    def __init__(self):
+        self.plan_list = []
+        self.plan_list = self.call_plan_list_from_file()
+    def call_plan_list_from_file(self):    #파일 불러오기
+        with open("information\plan_list_file.json", "r", encoding="UTF-8") as out_file:
+            return json.load(out_file)["0"]
