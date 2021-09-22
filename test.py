@@ -1,16 +1,25 @@
-from tkinter import *
+import tkinter as tk
+import json as js
 
-window=Tk()
+window=tk.Tk()
 window.title("YUN DAE HEE")
 window.geometry("400x800+100+100")
+window.resizable(False, False)
 
-listbow=Listbox(window, selectmode="extended", height=0)
-listbow.insert(0, "사과")
-listbow.insert(1, "딸기")
-listbow.insert(2, '바나나')
-listbow.pack()
+frame=tk.Frame(window)
 
-btn=Button(window, text="click", command=lambda: print("선택된 항목:", listbow.curselection()))
-btn.pack()
+scrollbar=tk.Scrollbar(frame)
+scrollbar.pack(side="right", fill="y")
+with open("information\chosen_book_file.json", "r", encoding="UTF-8") as out_file:
+            dictionary = js.load(out_file)
+
+listbox=tk.Listbox(frame, yscrollcommand = scrollbar.set)
+for line in range(1,1001):
+   listbox.insert(line, str(line) + str(dictionary) + "/1000")
+listbox.pack(side="left")
+
+scrollbar["command"]=listbox.yview
+
+frame.pack()
 
 window.mainloop()

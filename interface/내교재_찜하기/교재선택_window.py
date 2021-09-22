@@ -293,9 +293,6 @@ class 교재선택_window:
 
         choose_option(self.window)
 
-        찜한교재.plus_chosen_book_dict(교재선택_window.present_book_title, 교재선택_window.present_book)
-        찜한교재.save_chosen_book_to_file()
-
 
 class choose_option:
     subject_list = []
@@ -314,9 +311,7 @@ class choose_option:
         self.subject.place(x=20, y=500, width=50, height=50)
 
         # 과목 리스트
-        self.subject_listbox = Listbox(
-            window, selectmode="extended", height=0, listvariable=choose_option.subject_list
-        )
+        self.subject_listbox = Listbox(window, selectmode="single", height=0, exportselection=False)
         for i in range(0, len(choose_option.subject_list)):
             self.subject_listbox.insert(i, choose_option.subject_list[i])
         self.subject_listbox.place(x=100, y=500, width=100, height=100)
@@ -335,9 +330,65 @@ class choose_option:
         self.subject_to_add = Entry(window, font=("배달의민족 주아", 12))
         self.subject_to_add.place(x=110, y=610, width=80, height=50)
 
+        # 교재 종류(텍스트)
+        self.book_type = Label(window, text="교재 종류", font=menu_font)
+        self.book_type.place(x=200, y=500, width=100, height=50)
+
+        # 교재 종류(입력)
+        self.book_type_listbox = Listbox(
+            window, selectmode="single", height=0, exportselection=False
+        )
+        i = 0
+        for book_type in ["예습교재", "시험교재", "기타교재"]:
+            self.book_type_listbox.insert(i, book_type)
+            i += 1
+
+        self.book_type_listbox.place(x=290, y=500, width=100, height=100)
+
+        # 기타 교재 예시
+        self.etc_book_type_example = Label(
+            window, text="기타교재의 예시: 코딩 교재 등 \n교과목 외에 배우는 것", font=("배달의민족 주아", 10)
+        )
+        self.etc_book_type_example.place(x=210, y=600, width=200, height=50)
+
+        # 확인 버튼
+        self.confirm_button = Button(
+            window,
+            text="확인",
+            font=("배달의민족 주아", 12),
+            justify=CENTER,
+            command=lambda: self.transform_option(
+                self.subject_listbox.curselection(),
+                self.book_type_listbox.curselection(),
+            ),
+        )
+
+        self.confirm_button.place(x=330, y=650, width=70, height=50)
+
     def add_subject(self, subject):
         self.subject_listbox.insert(len(choose_option.subject_list), subject)
         choose_option.subject_list.append(subject)
         과목.update_subject(choose_option.subject_list)
         과목.save_subject_list_to_file()
-        print("성공")
+
+    def transform_option(self, subject, book_type):
+        if type(subject) == tuple and type(book_type) == tuple:
+            subject = self.subject_listbox.get(subject)
+            book_type = self.book_type_listbox.get(book_type)
+
+        # 교재 정보 저장
+        찜한교재.plus_chosen_book_dict(
+            교재선택_window.present_book_title, 교재선택_window.present_book, subject, book_type
+        )
+        찜한교재.save_chosen_book_to_file()
+
+        self.background.place_forget()
+        self.title.place_forget()
+        self.subject.place_forget()
+        self.subject_listbox.place_forget()
+        self.subject_add_button.place_forget()
+        self.subject_to_add.place_forget()
+        self.book_type.place_forget()
+        self.book_type_listbox.place_forget()
+        self.etc_book_type_example.place_forget()
+        self.confirm_button.place_forget()
