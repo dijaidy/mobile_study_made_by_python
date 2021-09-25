@@ -38,22 +38,18 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.next_button = Button(self.window, text = "다음 교재로 가기", font = menu_font, command = lambda: self.show_book_information(index_moving = 1, second_show_standard = self.combobox1.get(self.combobox1.curselection()[0], self.combobox1.curselection()[0])[0]))
         self.next_button.place(relx = 1/2, y = 750, height = 50, width = 200)
 
-        #큰 분류기준체크박스만들기
-        self.combobox = Listbox(self.window, selectmode = "extended", height = 0, width = 0)
-        self.combobox.insert(0, "과목별 분류")
-        self.combobox.insert(1, "성취도순 분류")
-        self.combobox.place(x = 0, y = 0)
+        #큰 분류기준선택버튼만들기
+        self.sort_by_acheivement = Button(self.window, text = "성취도순 분류", font = ("배달의민족 주아", 12), command = lambda: self.init_checkbox(standard = "성취도순 분류"))
+        self.sort_by_subject = Button(self.window, text = "과목별 분류", font = ("배달의민족 주아", 12), command = lambda: self.init_checkbox(standard = "과목별 분류"))
+        self.sort_by_acheivement.place(x = 0, y = 0, height = 20, width = 80)
+        self.sort_by_subject.place(x = 0, y = 20, height = 20, width = 80)
 
         #작은 분류체크박스만들기
         self.combobox1 = Listbox(self.window, selectmode = "extended", height = 0, width = 0)
         self.combobox1.place(x = 80, y = 0)
-        
-        #분류기준확인버튼만들기 "확인 후 분류기준 선택하기"
-        self.check_standard = Button(self.window, text = "큰 분류기준 선택하기", font = ("배달의민족 주아", 10), command = lambda: self.init_checkbox(self.combobox.get(self.combobox.curselection()[0], self.combobox.curselection()[0])[0]))
-        self.check_standard.place(x = 175, y = 5)
 
         #최종확인버튼만들기
-        self.showing_button = Button(self.window, text = "작은 분류기준 선택하고 교재보기", font = ("배달의민족 주아", 10), command = lambda: self.show_book_information(second_show_standard = self.combobox1.get(self.combobox1.curselection()[0], self.combobox1.curselection()[0])[0]))
+        self.showing_button = Button(self.window, text = "선택 완료", font = ("배달의민족 주아", 12), command = lambda: self.show_book_information(second_show_standard = self.combobox1.get(self.combobox1.curselection()[0], self.combobox1.curselection()[0])[0]))
         self.showing_button.place(x = 300, y = 5)
 
         # 교재 이미지
@@ -89,12 +85,12 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
             self.values = ["국어", "수학", "영어", "사회", "역사", "과학", "기술.가정"]
             for i in range(0, 7):
                 self.combobox1.insert(i, self.values[i])
-            self.combobox1.place(width = 80, height = 120, x = 80, y = 0)
+            self.combobox1.place(width = 80, height = 115, x = 80, y = 0)
         elif (standard == "성취도순 분류"):
             self.values = ["0%~20%", "21%~40%", "41%~60%", "61%~80%", "81%~100%"]
             for i in range(0, 5):
                 self.combobox1.insert(i, self.values[i])
-            self.combobox1.place(width = 80, height = 120, x = 80, y = 0)
+            self.combobox1.place(width = 80, height = 115, x = 80, y = 0)
             
 
     def show_book_information(self, index_moving = 0, second_show_standard = ""):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
@@ -104,11 +100,11 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         if second_show_standard in ["국어", "수학", "영어", "사회", "역사", "과학", "기술.가정"]:
             for i in chosen_book_keys:
                 if self.chosen_book_dict[i]["subject"] == second_show_standard:
-                    searching_result.append(self.chosen_book_dict[i])
+                    searching_result[i] = self.chosen_book_dict[i]
         elif second_show_standard in ["0%~20%", "21%~40%", "41%~60%", "61%~80%", "81%~100%"]:
             for i in chosen_book_keys:
                 if int(second_show_standard.split('~')[0].replace("%", "")) <= self.chosen_book_dict[i]["acheivement"] <= int(second_show_standard.split('~')[1].replace("%", "")):
-                    searching_result.append(self.chosen_book_dict[i])
+                    searching_result[i] = self.chosen_book_dict[i]
 
         # 인덱스 조정
         if self.image_index < len(searching_result):
@@ -147,13 +143,9 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.book_info.config(text = book_info_text)
 
         #인덱스 수정
-        searching_order_text = "%s / %s" % (len(searching_result), self.image_index)
+        searching_order_text = "%s / %s" % (len(searching_result), self.image_index+1)
         self.searching_order.config(text=searching_order_text)
 
-        # 링크 수정
-        def open_web():
-            webbrowser.open(book["link"])
-
-        self.open_web_button.config(command = open_web)
+        self.open_web_button.config(command = lambda: webbrowser.open(book["link"]))
 
         self.window.mainloop()
