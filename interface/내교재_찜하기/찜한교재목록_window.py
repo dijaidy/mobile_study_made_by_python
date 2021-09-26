@@ -39,14 +39,13 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.next_button.place(relx = 1/2, y = 750, height = 50, width = 200)
 
         #큰 분류기준선택버튼만들기
-        self.sort_by_acheivement = Button(self.window, text = "성취도순 분류", font = ("배달의민족 주아", 12), command = lambda: self.init_checkbox(standard = "성취도순 분류"))
-        self.sort_by_subject = Button(self.window, text = "과목별 분류", font = ("배달의민족 주아", 12), command = lambda: self.init_checkbox(standard = "과목별 분류"))
+        self.sort_by_acheivement = Button(self.window, text = "성취도순 분류", font = ("배달의민족 주아", 11), command = lambda: self.init_checkbox(standard = "성취도순 분류"))
+        self.sort_by_subject = Button(self.window, text = "과목별 분류", font = ("배달의민족 주아", 11), command = lambda: self.init_checkbox(standard = "과목별 분류"))
         self.sort_by_acheivement.place(x = 0, y = 0, height = 20, width = 80)
         self.sort_by_subject.place(x = 0, y = 20, height = 20, width = 80)
 
         #작은 분류체크박스만들기
         self.combobox1 = Listbox(self.window, selectmode = "extended", height = 0, width = 0)
-        self.combobox1.place(x = 80, y = 0)
 
         #최종확인버튼만들기
         self.showing_button = Button(self.window, text = "선택 완료", font = ("배달의민족 주아", 12), command = lambda: self.show_book_information(second_show_standard = self.combobox1.get(self.combobox1.curselection()[0], self.combobox1.curselection()[0])[0]))
