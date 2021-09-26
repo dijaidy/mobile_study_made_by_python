@@ -106,11 +106,12 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
                     searching_result[i] = self.chosen_book_dict[i]
 
         # 인덱스 조정
-        if self.book_index < len(searching_result)-1:
+        if self.book_index == 0 and index_moving == (-1):
+            self.book_index = len(searching_result)-1
+        elif self.book_index < len(searching_result)-1:
             self.book_index += index_moving
-        elif self.book_index == len(searching_result)-1:
+        elif self.book_index >= len(searching_result)-1:
             self.book_index = 0
-
         # 책제목 리스트
         title_list = list(searching_result.keys())
 
