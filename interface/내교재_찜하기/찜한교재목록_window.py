@@ -31,11 +31,11 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.searching_order.place(x=250, y=30, width=125, height=50)
         
         #이전 교재 보여주기 버튼
-        self.prior_button = Button(self.window, text = "이전 교재로 가기", font = menu_font, command = lambda: self.show_book_information(index_moving = -1, second_show_standard = self.combobox1.get(self.combobox1.curselection()[0], self.combobox1.curselection()[0])[0]))
+        self.prior_button = Button(self.window, text = "이전 교재로 가기", font = menu_font, command = lambda: self.show_book_information(index_moving = -1, sort_standard = self.combobox1.get(self.combobox1.curselection()[0], self.combobox1.curselection()[0])[0]))
         self.prior_button.place(relx = 0, y = 750, height = 50, width = 200)
 
         #다음 교재 보여주기 버튼
-        self.next_button = Button(self.window, text = "다음 교재로 가기", font = menu_font, command = lambda: self.show_book_information(index_moving = 1, second_show_standard = self.combobox1.get(self.combobox1.curselection()[0], self.combobox1.curselection()[0])[0]))
+        self.next_button = Button(self.window, text = "다음 교재로 가기", font = menu_font, command = lambda: self.show_book_information(index_moving = 1, sort_standard = self.combobox1.get(self.combobox1.curselection()[0], self.combobox1.curselection()[0])[0]))
         self.next_button.place(relx = 1/2, y = 750, height = 50, width = 200)
 
         #큰 분류기준선택버튼만들기
@@ -48,7 +48,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.combobox1 = Listbox(self.window, selectmode = "extended", height = 0, width = 0)
 
         #최종확인버튼만들기
-        self.showing_button = Button(self.window, text = "선택 완료", font = ("배달의민족 주아", 12), command = lambda: self.show_book_information(second_show_standard = self.combobox1.get(self.combobox1.curselection()[0], self.combobox1.curselection()[0])[0]))
+        self.showing_button = Button(self.window, text = "선택 완료", font = ("배달의민족 주아", 12), command = lambda: self.show_book_information(sort_standard = self.combobox1.get(self.combobox1.curselection()[0], self.combobox1.curselection()[0])[0]))
         self.showing_button.place(x = 300, y = 5)
 
         # 교재 이미지
@@ -73,7 +73,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.acheivement_bar.place(x = 225, y = 230)
 
         #기타 인스턴스변수 생성
-        self.image_index = 0
+        self.book_index = 0
         self.present_book = {}
         self.present_book_title = ""
 
@@ -92,33 +92,33 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
             self.combobox1.place(width = 80, height = 115, x = 80, y = 0)
             
 
-    def show_book_information(self, index_moving = 0, second_show_standard = ""):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
+    def show_book_information(self, index_moving = 0, sort_standard = ""):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
         # 찜한 책 모음 가져오기
         searching_result = {}
         chosen_book_keys = self.chosen_book_dict.keys()
-        if second_show_standard in ["국어", "수학", "영어", "사회", "역사", "과학", "기술.가정"]:
+        if sort_standard in ["국어", "수학", "영어", "사회", "역사", "과학", "기술.가정"]:
             for i in chosen_book_keys:
-                if self.chosen_book_dict[i]["subject"] == second_show_standard:
+                if self.chosen_book_dict[i]["subject"] == sort_standard:
                     searching_result[i] = self.chosen_book_dict[i]
-        elif second_show_standard in ["0%~20%", "21%~40%", "41%~60%", "61%~80%", "81%~100%"]:
+        elif sort_standard in ["0%~20%", "21%~40%", "41%~60%", "61%~80%", "81%~100%"]:
             for i in chosen_book_keys:
-                if int(second_show_standard.split('~')[0].replace("%", "")) <= self.chosen_book_dict[i]["acheivement"] <= int(second_show_standard.split('~')[1].replace("%", "")):
+                if int(sort_standard.split('~')[0].replace("%", "")) <= self.chosen_book_dict[i]["acheivement"] <= int(sort_standard.split('~')[1].replace("%", "")):
                     searching_result[i] = self.chosen_book_dict[i]
 
         # 인덱스 조정
-        if self.image_index < len(searching_result):
-            self.image_index += len(searching_result)
-        elif self.image_index == len(searching_result):
-            self.image_index = 0
+        if self.book_index < len(searching_result)-1:
+            self.book_index += index_moving
+        elif self.book_index == len(searching_result)-1:
+            self.book_index = 0
 
         # 책제목 리스트
         title_list = list(searching_result.keys())
 
         # curl 요청
         # curl "이미지 주소" > "저장 될 이미지 파일 이름"
-        book = searching_result[title_list[self.image_index]]
+        book = searching_result[title_list[self.book_index]]
         self.present_book = book
-        self.present_book_title = title_list[self.image_index]
+        self.present_book_title = title_list[self.book_index]
         url = book["cover"]
 
         os.system("curl " + url + " > image_sources\교재선택_image_file.jpg")
@@ -134,7 +134,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.book_image.config(image=resized_image, text="")
 
         # 타이틀 수정
-        book_title_text = title_list[self.image_index]
+        book_title_text = title_list[self.book_index]
         self.book_title.config(text = book_title_text)
 
         # 정보 수정
@@ -142,7 +142,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.book_info.config(text = book_info_text)
 
         #인덱스 수정
-        searching_order_text = "%s / %s" % (len(searching_result), self.image_index+1)
+        searching_order_text = "%s / %s" % (len(searching_result), self.book_index+1)
         self.searching_order.config(text=searching_order_text)
 
         self.open_web_button.config(command = lambda: webbrowser.open(book["link"]))
