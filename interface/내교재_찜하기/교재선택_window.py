@@ -1,3 +1,7 @@
+# 바꾼거
+# 타이틀 설정
+
+
 # 교재선택_window
 from tkinter import *
 from typing import List
@@ -27,11 +31,12 @@ api_loading_source = API_loading()
 
 # sub_menu 윈도우
 class 교재선택_window:
-    image_index = 0
+    # 현재 띄워주는 책의 정보
+    book_index = 0
     present_book_title = ""
     present_book = {}
 
-    # 검색 후 저장
+    # 가져온 책들의 결과
     searching_result = {}
     searching_book_title_list = []
     book_count = 0
@@ -39,10 +44,8 @@ class 교재선택_window:
     def __init__(self):
         # 창 설정
         self.window = Tk()
-        self.window.title("교재선택")
+        self.window.title("교재 선택")
         self.window.geometry("400x800")
-
-        self.book_title_key = 0  # 책정보 딕션너리의 key를 keys()함수로 리스트로 만든 것에 쓰이는 인덱스값
 
         # 검색어입력창
         self.search_entry = Entry(self.window, font=menu_font)
@@ -124,7 +127,7 @@ class 교재선택_window:
         searching_result = api_loading_source.load_aladin_book(self.bring_keyword())
         교재선택_window.searching_result = searching_result
         교재선택_window.searching_book_title_list = list(교재선택_window.searching_result.keys())
-        교재선택_window.image_index = 0
+        교재선택_window.book_index = 0
         교재선택_window.book_count = len(교재선택_window.searching_result)
 
         # 책제목 리스트
@@ -166,7 +169,7 @@ class 교재선택_window:
         self.open_web_button.config(command=open_web)
 
         # 검색 순서 수정
-        searching_order_text = "%s / %s" % (교재선택_window.image_index + 1, 교재선택_window.book_count)
+        searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
         self.searching_order.config(text=searching_order_text)
 
         self.window.mainloop()
@@ -179,14 +182,14 @@ class 교재선택_window:
             return
 
         # 인덱스 조정
-        교재선택_window.image_index += index_moving
-        if 교재선택_window.image_index < 0:
-            교재선택_window.image_index += 교재선택_window.book_count
-        elif 교재선택_window.image_index >= 교재선택_window.book_count:
-            교재선택_window.image_index -= 교재선택_window.book_count
+        교재선택_window.book_index += index_moving
+        if 교재선택_window.book_index < 0:
+            교재선택_window.book_index += 교재선택_window.book_count
+        elif 교재선택_window.book_index >= 교재선택_window.book_count:
+            교재선택_window.book_index -= 교재선택_window.book_count
 
             # 책제목 리스트
-        book_title = 교재선택_window.searching_book_title_list[교재선택_window.image_index]
+        book_title = 교재선택_window.searching_book_title_list[교재선택_window.book_index]
 
         # curl 요청
         # curl "이미지 주소" > "저장 될 이미지 파일 이름"
@@ -224,7 +227,7 @@ class 교재선택_window:
         self.open_web_button.config(command=open_web)
 
         # 검색 순서 수정
-        searching_order_text = "%s / %s" % (교재선택_window.image_index + 1, 교재선택_window.book_count)
+        searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
         self.searching_order.config(text=searching_order_text)
 
         self.window.mainloop()
@@ -232,20 +235,19 @@ class 교재선택_window:
     # 다음 검색결과
     def show_next_book(self):
         index_moving = 1
-        book_count = len(교재선택_window.searching_result)
 
         # 인덱스 조정
-        교재선택_window.image_index += index_moving
-        if 교재선택_window.image_index < 0:
-            교재선택_window.image_index += 교재선택_window.book_count
-        elif 교재선택_window.image_index >= 교재선택_window.book_count:
-            교재선택_window.image_index -= 교재선택_window.book_count
+        교재선택_window.book_index += index_moving
+        if 교재선택_window.book_index < 0:
+            교재선택_window.book_index += 교재선택_window.book_count
+        elif 교재선택_window.book_index >= 교재선택_window.book_count:
+            교재선택_window.book_index -= 교재선택_window.book_count
 
         if 교재선택_window.book_count == 0:
             return
 
             # 책제목 리스트
-        book_title = 교재선택_window.searching_book_title_list[교재선택_window.image_index]
+        book_title = 교재선택_window.searching_book_title_list[교재선택_window.book_index]
 
         # curl 요청
         # curl "이미지 주소" > "저장 될 이미지 파일 이름"
@@ -283,7 +285,7 @@ class 교재선택_window:
         self.open_web_button.config(command=open_web)
 
         # 검색 순서 수정
-        searching_order_text = "%s / %s" % (교재선택_window.image_index + 1, 교재선택_window.book_count)
+        searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
         self.searching_order.config(text=searching_order_text)
 
         self.window.mainloop()
