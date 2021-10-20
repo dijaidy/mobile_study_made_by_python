@@ -4,6 +4,7 @@
 
 # 교재선택_window
 from tkinter import *
+from types import CellType
 from typing import List
 import urllib.request
 import sys
@@ -86,21 +87,39 @@ class 교재선택_window:
         self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
 
         # 교재 이미지
-        self.book_image = Label(self.window, borderwidth=2, relief="sunken", text="자료 없음")
+        self.book_image = Label(self.window, borderwidth=3, relief="ridge")
         self.book_image.place(x=25, y=75, height=250, width=200)
 
+        # 이미지 크기 조정
+        size_adjusting_image = Image.open("image_sources\교재미선택_이미지.png")
+        image = size_adjusting_image.resize((200, 250), Image.ANTIALIAS)
+
+        resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
+
+        self.book_image.config(image=resized_image)
+
         # 교재 타이틀
-        self.book_title = Message(self.window, font=("배달의민족 주아", 20), aspect=300)
-        self.book_title.place(x=50, y=350, height=150, width=350)
+        self.book_title = Message(
+            self.window,
+            font=("배달의민족 주아", 17),
+            anchor=N,
+            justify=CENTER,
+            aspect=300,
+        )
+        self.book_title.place(x=0, y=330, height=250, width=400)
 
         # 교재 정보
-        self.book_price = Label(self.window, font=menu_font, justify=LEFT, padx=1, pady=1)
-        self.book_price.place(x=0, y=500, height=50, width=400)
 
         self.book_description = Message(
-            self.window, font=("배달의민족 주아", 12), justify=LEFT, padx=10, anchor=W, aspect=400
+            self.window, font=("배달의민족 주아", 12), justify=LEFT, padx=10, anchor=NW, aspect=400
         )
-        self.book_description.place(x=0, y=550, height=150, width=400)
+        self.book_description.place(x=0, y=450, height=150, width=400)
+
+        # 교재 출처
+        self.book_link = Message(
+            self.window, font=("배달의민족 주아", 15), justify=LEFT, anchor=NW, aspect=400
+        )
+        self.book_link.place(x=0, y=600, width=400, height=100)
 
         # 교재 웹사이트 오픈
         self.open_web_button = Button(
@@ -140,10 +159,10 @@ class 교재선택_window:
         교재선택_window.present_book = book
         url = book["cover"]
 
-        os.system("curl " + url + " > image_sources\교재선택_image_file.jpg")
+        os.system("curl " + url + " > ignore_image\교재선택_image_file.jpg")
 
         # 이미지 크기 조정
-        size_adjusting_image = Image.open("image_sources\교재선택_image_file.jpg")
+        size_adjusting_image = Image.open("ignore_image\교재선택_image_file.jpg")
         image = size_adjusting_image.resize(
             (size_adjusting_image.size[0] * 2, size_adjusting_image.size[1] * 2), Image.ANTIALIAS
         )
@@ -153,14 +172,14 @@ class 교재선택_window:
         self.book_image.config(image=resized_image, text="")
 
         # 타이틀 수정
-        self.book_title.config(text=first_book_title)
+        self.book_title.config(text="제목: \n%s" % first_book_title)
 
         # 정보 수정
-        book_price_text = "가격: %s원" % book["priceStandard"]
-        self.book_price.config(text=book_price_text)
+        book_link_text = book["link"]
+        self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
 
         book_description_text = book["description"]
-        self.book_description.config(text=book_description_text)
+        self.book_description.config(text="교재 설명: \n%s" % book_description_text)
 
         # 링크 수정
         def open_web():
@@ -198,10 +217,10 @@ class 교재선택_window:
         교재선택_window.present_book = book
         url = book["cover"]
 
-        os.system("curl " + url + " > image_sources\교재선택_image_file.jpg")
+        os.system("curl " + url + " > ignore_image\교재선택_image_file.jpg")
 
         # 이미지 크기 조정
-        size_adjusting_image = Image.open("image_sources\교재선택_image_file.jpg")
+        size_adjusting_image = Image.open("ignore_image\교재선택_image_file.jpg")
         image = size_adjusting_image.resize(
             (size_adjusting_image.size[0] * 2, size_adjusting_image.size[1] * 2), Image.ANTIALIAS
         )
@@ -211,14 +230,14 @@ class 교재선택_window:
         self.book_image.config(image=resized_image, text="")
 
         # 타이틀 수정
-        self.book_title.config(text=book_title)
+        self.book_title.config(text="제목: \n%s" % book_title)
 
         # 정보 수정
-        book_price_text = "가격: %s원" % book["priceStandard"]
-        self.book_price.config(text=book_price_text)
+        book_link_text = book["link"]
+        self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
 
         book_description_text = book["description"]
-        self.book_description.config(text=book_description_text)
+        self.book_description.config(text="교재 설명: \n%s" % book_description_text)
 
         # 링크 수정
         def open_web():
@@ -256,10 +275,10 @@ class 교재선택_window:
         교재선택_window.present_book = book
         url = book["cover"]
 
-        os.system("curl " + url + " > image_sources\교재선택_image_file.jpg")
+        os.system("curl " + url + " > ignore_image\교재선택_image_file.jpg")
 
         # 이미지 크기 조정
-        size_adjusting_image = Image.open("image_sources\교재선택_image_file.jpg")
+        size_adjusting_image = Image.open("ignore_image\교재선택_image_file.jpg")
         image = size_adjusting_image.resize(
             (size_adjusting_image.size[0] * 2, size_adjusting_image.size[1] * 2), Image.ANTIALIAS
         )
@@ -269,14 +288,14 @@ class 교재선택_window:
         self.book_image.config(image=resized_image, text="")
 
         # 타이틀 수정
-        self.book_title.config(text=book_title)
+        self.book_title.config(text="제목: \n%s" % book_title)
 
         # 정보 수정
-        book_price_text = "가격: %s원" % book["priceStandard"]
-        self.book_price.config(text=book_price_text)
+        book_link_text = book["link"]
+        self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
 
         book_description_text = book["description"]
-        self.book_description.config(text=book_description_text)
+        self.book_description.config(text="교재 설명: \n%s" % book_description_text)
 
         # 링크 수정
         def open_web():
