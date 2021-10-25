@@ -2,6 +2,7 @@ from tkinter import *
 import urllib.request
 import sys
 import os
+import time
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from information_management.api_loading import API_loading

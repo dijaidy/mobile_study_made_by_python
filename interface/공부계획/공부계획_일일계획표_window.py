@@ -13,14 +13,14 @@ from information_management.user_information import 공부계획_manage_user_inf
 
 class 일일공부계획_window(공부계획_manage_user_information, 찜한교재_manage_user_information):
     def __init__(self, planning_day):
-        super.__init__()
+        super().__init__()
         # 창 설정
         self.window = Tk()
-        self.window.title("공부계획")
+        self.window.title("일일공부계획")
         self.window.geometry("400x800")
         self.canvas=Canvas(self.window, width=400, height=400)  #트킨터에서 도형을 그리기 위한 바탕 설정
         self.canvas.place(x=0, y=0) #바탕 위치 설정
-        self.clock=self.canvas.create_oval(x1 = 40, y1 = 40, x2 = 360, y2 = 360)    #시계정의
+        self.clock=self.canvas.create_oval(x1 = 40, y1 = 40, x2 = 360, y2 = 360, start=0, extent=0)    #시계정의
         self.planned_time={}      #여기서 계획표에서 공부 시작시간, 끝내는 시간 보여주는 부채꼴을 만들 것임
         self.plan_list=self.plan_list_for_month[planning_day]
         self.plan_list_key=self.plan_list.keys()  #공부계획의 키(교재)를 추출하여 리스트로 정리
@@ -117,5 +117,3 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.searching_order.config(text=searching_order_text)
 
         self.window.mainloop()  
-
-a=일일공부계획_window(planning_day=150)
