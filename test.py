@@ -1,25 +1,16 @@
-import tkinter as tk
-import json as js
+import json
+import csv
 
-window=tk.Tk()
-window.title("YUN DAE HEE")
-window.geometry("400x800+100+100")
-window.resizable(False, False)
-
-frame=tk.Frame(window)
-
-scrollbar=tk.Scrollbar(frame)
-scrollbar.pack(side="right", fill="y")
-with open("information\chosen_book_file.json", "r", encoding="UTF-8") as out_file:
-            dictionary = js.load(out_file)
-
-listbox=tk.Listbox(frame, yscrollcommand = scrollbar.set)
-for line in range(1,1001):
-   listbox.insert(line, str(line) + str(dictionary) + "/1000")
-listbox.pack(side="left")
-
-scrollbar["command"]=listbox.yview
-
-frame.pack()
-
-window.mainloop()
+with open("information\교재_카테고리_csv.csv", "r") as csv_in_file:
+    filereader = csv.reader(csv_in_file)
+    header = next(filereader)
+    print(header)
+    depth1_dict = {}
+    with open("information\교재_카테고리_dict.json", "w", encoding="UTF-8") as out_file:
+        for row in filereader:
+            if row[5] == "":
+                depth1_dict[row[4]] = {"CID": row[0], "item": {}}
+            else:
+                depth1_dict[row[4]]["item"][row[5]] = row[0]
+        print(depth1_dict)
+        json.dump(depth1_dict, out_file, ensure_ascii=False)
