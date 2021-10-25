@@ -47,7 +47,6 @@ class 공부계획_manage_user_information:  # 공부계획한 것들 저장
         self.plan_list_for_month = {}
         self.plan_list_for_month = self.call_plan_list_from_file()  # 전체 계획 저장
         self.plan_list = {}
-        self.today_plan_list = self.plan_list_for_month[self.Korean_time.tm_yday]  # 오늘의 공부계획
 
     def plus_plan_list(self, book_dict, start_time, end_time, day):
         # start_time은 시작시간, end_time은 끝나는 시간, day는 실행날짜
@@ -62,9 +61,9 @@ class 공부계획_manage_user_information:  # 공부계획한 것들 저장
         with open("information\plan_list_file.json", "r", encoding="UTF-8") as out_file:
             return json.load(out_file)
 
-    def return_present_time(self):  # 현재 시각, 분을 튜플형태로 반환
+    def return_present_time(self):  # 현재 시간을 struct로 전달
         self.Korean_time = time.localtime(time.time())
-        return (self.Korean_time.tm_hour, self.Korean_time.tm_min)
+        return self.Korean_time
 
     def correct_angle(self, start_hour, start_minute, end_hour, end_minute):  # 시계침 각도 조정
         for_start = end_hour * 15 + end_minute / 4
