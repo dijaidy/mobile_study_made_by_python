@@ -33,7 +33,7 @@ api_loading_source = API_loading()
 
 
 # sub_menu 윈도우
-class 교재선택_window:
+class 교재선택_window(Tk):
     # 현재 띄워주는 책의 정보
     book_index = 0
     present_book_title = ""
@@ -45,6 +45,9 @@ class 교재선택_window:
     book_count = 0
 
     def __init__(self):
+        # 프레임
+        self._frame = None
+
         # 창 설정
         self.window = Tk()
         self.window.title("교재 선택")
@@ -56,7 +59,7 @@ class 교재선택_window:
 
         # 검색하기 버튼
         self.search_button = Button(
-            self.window, text="검색하기", font=menu_font, command=self.show_book_information
+            self.window, text="검색하기", font=menu_font, command=self.show_simple_books
         )
         self.search_button.place(relx=4 / 5, relwidth=1 / 5, rely=0, height=50)
 
@@ -109,84 +112,13 @@ class 교재선택_window:
 
         self.main_category_combobox.bind("<<ComboboxSelected>>", set_main_category)
 
-        # 검색 순서/전체 검색결과 텍스트
-        self.searching_order = Label(self.window, font=menu_font, text="  /  ")
-        self.searching_order.place(x=250, y=125, width=125, height=50)
-
-        # 다음 검색결과 보기 버튼
-        self.next_button = Button(
-            self.window,
-            text="다음 검색결과 보기",
-            font=menu_font,
-            command=lambda: self.show_next_book(),
-        )
-        self.next_button.place(relx=1 / 2, relwidth=1 / 2, y=800 - 50, height=50)
-
-        # 이전 검색결과 보기 버튼
-        self.prior_button = Button(
-            self.window,
-            text="이전 검색결과 보기",
-            font=menu_font,
-            command=lambda: self.show_prior_book(),
-        )
-        self.prior_button.place(relx=0, relwidth=1 / 2, y=800 - 50, height=50)
-
-        # 내 교재 찜하기 버튼
-        self.choose_my_textbook = Button(
-            self.window, text="내 교재 찜하기", font=menu_font, command=self.choose_my_book
-        )
-        self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
-
-        # 교재 이미지
-        self.book_image = Label(self.window, borderwidth=3, relief="ridge")
-        self.book_image.place(x=25, y=125, height=188, width=150)
-
-        # 이미지 크기 조정
-        size_adjusting_image = Image.open("image_sources\교재미선택_이미지.png")
-        image = size_adjusting_image.resize((150, 188), Image.ANTIALIAS)
-
-        resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
-        self.교재미선택_image = resized_image
-        self.book_image.config(image=resized_image)
-
-        # 교재 타이틀
-        self.book_title = Message(
-            self.window,
-            font=("배달의민족 주아", 17),
-            anchor=N,
-            justify=CENTER,
-            aspect=300,
-        )
-        self.book_title.place(x=0, y=330, height=250, width=400)
-
-        # 교재 정보
-
-        self.book_description = Message(
-            self.window, font=("배달의민족 주아", 12), justify=LEFT, padx=10, anchor=NW, aspect=400
-        )
-        self.book_description.place(x=0, y=450, height=150, width=400)
-
-        # 교재 출처
-        self.book_link = Message(
-            self.window, font=("배달의민족 주아", 15), justify=LEFT, anchor=NW, aspect=400
-        )
-        self.book_link.place(x=0, y=600, width=400, height=100)
-
-        # 교재 웹사이트 오픈
-        self.open_web_button = Button(
-            self.window, font=menu_font, text="교재\n웹사이트\n오픈", padx=1, pady=1
-        )
-        self.open_web_button.place(x=250, y=175, width=125, height=125)
-
-        # 링크
-
-        # 학교수업복습에 사용할 거
-        # for subject, id in api_loading_source.return_subject_id().items():
-        #    print("Key:%s\tValue:%s" % (subject, id))
-
-        # 루프
-        self.window.resizable(width=False, height=False)
-        self.window.mainloop()
+    def switch_frame(self, frame_class):
+        new_frame = frame_class(self.window)
+        if self._frame != new_frame:
+            if self._frame is not None:
+                self._frame.destroy()
+            self._frame = new_frame
+            self._frame.pack()
 
     def bring_keyword_and_CID(self):  # 검색어 입력창에서 받은 입력어 반환
         # 키워드 가져오기
@@ -202,7 +134,101 @@ class 교재선택_window:
             CID = self.category_dict[selected_main_category]["item"][selected_sub_category]
         return (keyword, CID)
 
-    def show_book_information(self):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
+    def show_simple_books(self):  # 알라딘 api에서 가져온 책 정보를 전체적으로 띄워줌
+        self.switch_frame(show_simple_books_frame)
+
+        if 0 == 1:
+            self.show_each_book_information()
+
+    def show_each_book_information(self):
+        self.switch_frame(show_each_book_information_frame)
+
+
+class show_simple_books_frame(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+
+        Label(self, text="안녕").pack(side="bottom", fill="x")
+        Label(self, text="하세요").pack(side="bottom", fill="x")
+
+
+class show_each_book_information_frame(Frame, 교재선택_window):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+        # 검색 순서/전체 검색결과 텍스트
+        self.searching_order = Label(self, font=menu_font, text="  /  ")
+        self.searching_order.place(x=250, y=125, width=125, height=50)
+
+        # 다음 검색결과 보기 버튼
+        self.next_button = Button(
+            self,
+            text="다음 검색결과 보기",
+            font=menu_font,
+            command=lambda: self.show_next_book(),
+        )
+        self.next_button.place(relx=1 / 2, relwidth=1 / 2, y=800 - 50, height=50)
+
+        # 이전 검색결과 보기 버튼
+        self.prior_button = Button(
+            self,
+            text="이전 검색결과 보기",
+            font=menu_font,
+            command=lambda: self.show_prior_book(),
+        )
+        self.prior_button.place(relx=0, relwidth=1 / 2, y=800 - 50, height=50)
+
+        # 내 교재 찜하기 버튼
+        self.choose_my_textbook = Button(
+            self, text="내 교재 찜하기", font=menu_font, command=self.choose_my_book
+        )
+        self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
+
+        # 교재 이미지
+        self.book_image = Label(self, borderwidth=3, relief="ridge")
+        self.book_image.place(x=25, y=125, height=188, width=150)
+
+        # 이미지 크기 조정
+        size_adjusting_image = Image.open("image_sources\교재미선택_이미지.png")
+        image = size_adjusting_image.resize((150, 188), Image.ANTIALIAS)
+
+        resized_image = ImageTk.PhotoImage(image, master=self)  # 새창에서 그림띄우면 마스터 정의 꼭!
+        self.교재미선택_image = resized_image
+        self.book_image.config(image=resized_image)
+
+        # 교재 타이틀
+        self.book_title = Message(
+            self,
+            font=("배달의민족 주아", 17),
+            anchor=N,
+            justify=CENTER,
+            aspect=300,
+        )
+        self.book_title.place(x=0, y=330, height=250, width=400)
+
+        # 교재 정보
+
+        self.book_description = Message(
+            self, font=("배달의민족 주아", 12), justify=LEFT, padx=10, anchor=NW, aspect=400
+        )
+        self.book_description.place(x=0, y=450, height=150, width=400)
+
+        # 교재 출처
+        self.book_link = Message(self, font=("배달의민족 주아", 15), justify=LEFT, anchor=NW, aspect=400)
+        self.book_link.place(x=0, y=600, width=400, height=100)
+
+        # 교재 웹사이트 오픈
+        self.open_web_button = Button(self, font=menu_font, text="교재\n웹사이트\n오픈", padx=1, pady=1)
+        self.open_web_button.place(x=250, y=175, width=125, height=125)
+
+        # 링크
+
+        # 학교수업복습에 사용할 거
+        # for subject, id in api_loading_source.return_subject_id().items():
+        #    print("Key:%s\tValue:%s" % (subject, id))
+
+        # 루프
+
+    def show_each_book_information(self):  # 선택한 책 정보를 자세히 보여줌
         # 검색 결과 책 모음 가져오고, 저장하기
         searching_result = api_loading_source.load_aladin_book(
             self.bring_keyword_and_CID()[0], self.bring_keyword_and_CID()[1]
@@ -250,7 +276,7 @@ class 교재선택_window:
                 Image.ANTIALIAS,
             )
 
-            resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
+            resized_image = ImageTk.PhotoImage(image, master=self)  # 새창에서 그림띄우면 마스터 정의 꼭!
 
             self.book_image.config(image=resized_image)
 
@@ -261,8 +287,11 @@ class 교재선택_window:
             book_link_text = book["link"]
             self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
 
-            book_description_text = book["description"]
-            self.book_description.config(text="교재 설명: \n%s" % book_description_text)
+            if book["description"] != "":
+                book_description_text = book["description"]
+                self.book_description.config(text="교재 설명: \n%s" % book_description_text)
+            else:
+                self.book_description.config(text="교재 설명: \n해당 사이트에서 교재정보를 제공하지 않습니다.")
 
             # 링크 수정
             def open_web():
@@ -274,7 +303,7 @@ class 교재선택_window:
             searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
             self.searching_order.config(text=searching_order_text)
 
-        self.window.mainloop()
+        self.mainloop()
 
     # 이전 검색결과
     def show_prior_book(self):
@@ -311,7 +340,7 @@ class 교재선택_window:
                 Image.ANTIALIAS,
             )
 
-            resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
+            resized_image = ImageTk.PhotoImage(image, master=self)  # 새창에서 그림띄우면 마스터 정의 꼭!
 
             self.book_image.config(image=resized_image, text="")
 
@@ -335,7 +364,7 @@ class 교재선택_window:
             searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
             self.searching_order.config(text=searching_order_text)
 
-            self.window.mainloop()
+            self.mainloop()
 
     # 다음 검색결과
     def show_next_book(self):
@@ -371,7 +400,7 @@ class 교재선택_window:
                 Image.ANTIALIAS,
             )
 
-            resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
+            resized_image = ImageTk.PhotoImage(image, master=self)  # 새창에서 그림띄우면 마스터 정의 꼭!
 
             self.book_image.config(image=resized_image, text="")
 
@@ -395,7 +424,7 @@ class 교재선택_window:
             searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
             self.searching_order.config(text=searching_order_text)
 
-            self.window.mainloop()
+            self.mainloop()
 
     # 내교재 찜하기 버튼
     def choose_my_book(self):
