@@ -574,3 +574,6 @@ class choose_option:
         self.sub_cancel_button.place_forget()
         self.sub_confirm_button.place_forget()
         self.background.place_forget()
+
+
+# 테스트
