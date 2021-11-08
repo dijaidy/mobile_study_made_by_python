@@ -1,38 +1,25 @@
-from tkinter import *
+import tkinter as tk
+import json as js
 
+window = tk.Tk()
+window.title("YUN DAE HEE")
+window.geometry("400x800+100+100")
+window.resizable(False, False)
 
-class 메인(Tk):
-    def __init__(self):
-        self._frame = None
-        # 창 설정
-        self.window = Tk()
-        self.window.title("메인")
-        self.window.geometry("400x800")
+frame = tk.Frame(window)
 
-        self.button1 = Button(self.window, text="프레임 버튼", command=self.show_frame)
-        self.button1.pack()
+scrollbar = tk.Scrollbar(frame)
+scrollbar.pack(side="right", fill="y")
+with open("information\chosen_book_file.json", "r", encoding="UTF-8") as out_file:
+    dictionary = js.load(out_file)
 
-        self.window.mainloop()
+listbox = tk.Listbox(frame, yscrollcommand=scrollbar.set)
+for line in range(1, 1001):
+    listbox.insert(line, str(line) + str(dictionary) + "/1000")
+listbox.pack(side="left")
 
-    def switch_frame(self, frame_class):
+scrollbar["command"] = listbox.yview
 
-        new_frame = frame_class(self.window)
-        if self._frame != new_frame:
-            if self._frame is not None:
-                self._frame.destroy()
-            self._frame = new_frame
-            self._frame.pack()
+frame.pack()
 
-    def show_frame(self):
-        self.switch_frame(프레임)
-
-
-class 프레임(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
-        Label(self, text="안녕").pack()
-
-
-메인()
-
-# 테스트
+window.mainloop()

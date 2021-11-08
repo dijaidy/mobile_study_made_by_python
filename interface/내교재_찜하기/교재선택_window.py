@@ -3,7 +3,9 @@
 
 
 # 교재선택_window
+import json
 from tkinter import *
+import tkinter
 from types import CellType
 from typing import List
 import urllib.request
@@ -11,8 +13,6 @@ import sys
 import os
 from PIL import Image, ImageTk
 import webbrowser
-import tkinter.ttk
-import json
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 sys.path.append(
@@ -24,8 +24,8 @@ from information_management.user_information import 과목_manage_user_informati
 
 # 폰트 설정
 title_font = ("배달의민족 주아", 23)
-menu_font = ("배달의민족 주아", 15)
 submenu_font = ("배달의민족 주아", 17)
+menu_font = ("배달의민족 주아", 15)
 
 api_loading_source = API_loading()
 찜한교재 = 찜한교재_manage_user_information()
@@ -54,12 +54,12 @@ class 교재선택_window(Tk):
         self.window.geometry("400x800")
 
         # 검색어입력창
-        self.search_entry = Entry(self.window, font=menu_font)
+        self.search_entry = Entry(self.window, font=("배달의민족 주아", 15))
         self.search_entry.place(relx=0, relwidth=4 / 5, rely=0, height=50)
 
         # 검색하기 버튼
         self.search_button = Button(
-            self.window, text="검색하기", font=menu_font, command=self.show_simple_books
+            self.window, text="검색하기", font=menu_font, command=lambda: self.show_book_information(0)
         )
         self.search_button.place(relx=4 / 5, relwidth=1 / 5, rely=0, height=50)
 
@@ -101,63 +101,11 @@ class 교재선택_window(Tk):
         self.sub_category_combobox.place(x=220, y=80, width=160, height=30)
         self.sub_category_combobox.current(0)
 
-        # 메인 카테고리 설정시 동작하는 함수(서브카테고리 리스트 변경)
-        def set_main_category(event):
-            grade_type = self.main_category_combobox.get()
-            subject = self.category_dict[grade_type]["item"]
-            subject = list(subject.keys())
-            subject.insert(0, "전체")
-            self.sub_category_combobox["values"] = subject
-            self.sub_category_combobox.current(0)
+        self.search_button.place(relx=4 / 5, relwidth=1 / 5, rely=0, height=50)
 
-        self.main_category_combobox.bind("<<ComboboxSelected>>", set_main_category)
-
-    def switch_frame(self, frame_class):
-        new_frame = frame_class(self.window)
-        if self._frame != new_frame:
-            if self._frame is not None:
-                self._frame.destroy()
-            self._frame = new_frame
-            self._frame.pack()
-
-    def bring_keyword_and_CID(self):  # 검색어 입력창에서 받은 입력어 반환
-        # 키워드 가져오기
-        keyword = self.search_entry.get()
-        # 카테고리 키 설정
-        selected_main_category = self.main_category_combobox.get()
-        selected_sub_category = self.sub_category_combobox.get()
-        if selected_main_category == "전체":
-            CID = 76000
-        elif selected_sub_category == "전체":
-            CID = self.category_dict[selected_main_category]["CID"]
-        else:
-            CID = self.category_dict[selected_main_category]["item"][selected_sub_category]
-        return (keyword, CID)
-
-    def show_simple_books(self):  # 알라딘 api에서 가져온 책 정보를 전체적으로 띄워줌
-        self.switch_frame(show_simple_books_frame)
-
-        if 0 == 1:
-            self.show_each_book_information()
-
-    def show_each_book_information(self):
-        self.switch_frame(show_each_book_information_frame)
-
-
-class show_simple_books_frame(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
-
-        Label(self, text="안녕").pack(side="bottom", fill="x")
-        Label(self, text="하세요").pack(side="bottom", fill="x")
-
-
-class show_each_book_information_frame(Frame, 교재선택_window):
-    def __init__(self, master):
-        Frame.__init__(self, master)
         # 검색 순서/전체 검색결과 텍스트
-        self.searching_order = Label(self, font=menu_font, text="  /  ")
-        self.searching_order.place(x=250, y=125, width=125, height=50)
+        self.searching_order = Label(self.window, font=menu_font, text="  /  ")
+        self.searching_order.place(x=250, y=75, width=125, height=50)
 
         # 다음 검색결과 보기 버튼
         self.next_button = Button(
@@ -184,12 +132,41 @@ class show_each_book_information_frame(Frame, 교재선택_window):
         self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
 
         # 교재 이미지
+
+        # 메인 카테고리 설정시 동작하는 함수(서브카테고리 리스트 변경)
+        def set_main_category(event):
+            grade_type = self.main_category_combobox.get()
+            subject = self.category_dict[grade_type]["item"]
+            subject = list(subject.keys())
+            subject.insert(0, "전체")
+            self.sub_category_combobox["values"] = subject
+            self.sub_category_combobox.current(0)
+
+        self.main_category_combobox.bind("<<ComboboxSelected>>", set_main_category)
+
+    def bring_keyword_and_CID(self):  # 검색어 입력창에서 받은 입력어 반환
+        # 키워드 가져오기
+        keyword = self.search_entry.get()
+        # 카테고리 키 설정
+        selected_main_category = self.main_category_combobox.get()
+        selected_sub_category = self.sub_category_combobox.get()
+        if selected_main_category == "전체":
+            CID = 76000
+        elif selected_sub_category == "전체":
+            CID = self.category_dict[selected_main_category]["CID"]
+        else:
+            CID = self.category_dict[selected_main_category]["item"][selected_sub_category]
+        return (keyword, CID)
+
+        self.searching_order = Label(self, font=menu_font, text="  /  ")
+        self.searching_order.place(x=250, y=125, width=125, height=50)
+
         self.book_image = Label(self, borderwidth=3, relief="ridge")
         self.book_image.place(x=25, y=125, height=188, width=150)
 
         # 이미지 크기 조정
         size_adjusting_image = Image.open("image_sources\교재미선택_이미지.png")
-        image = size_adjusting_image.resize((150, 188), Image.ANTIALIAS)
+        image = size_adjusting_image.resize((200, 250), Image.ANTIALIAS)
 
         resized_image = ImageTk.PhotoImage(image, master=self)  # 새창에서 그림띄우면 마스터 정의 꼭!
         self.교재미선택_image = resized_image
@@ -228,208 +205,185 @@ class show_each_book_information_frame(Frame, 교재선택_window):
 
         # 루프
 
-    def show_each_book_information(self):  # 선택한 책 정보를 자세히 보여줌
+    def bring_keyword(self):  # 검색어 입력창에서 받은 입력어 반환
+        keyword = self.search_entry.get()
+        return keyword
+
+    def show_book_information(self, index_moving=0):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
         # 검색 결과 책 모음 가져오고, 저장하기
-        searching_result = api_loading_source.load_aladin_book(
-            self.bring_keyword_and_CID()[0], self.bring_keyword_and_CID()[1]
-        )
+        searching_result = api_loading_source.load_aladin_book(self.bring_keyword())
         교재선택_window.searching_result = searching_result
+        교재선택_window.searching_book_title_list = list(교재선택_window.searching_result.keys())
+        교재선택_window.book_index = 0
+        교재선택_window.book_count = len(교재선택_window.searching_result)
 
-        if searching_result == {}:
-            self.book_image.config(image=self.교재미선택_image)
-            # 타이틀 수정
-            self.book_title.config(text="검색된 교재가 없습니다.")
+        # 책제목 리스트
+        first_book_title = 교재선택_window.searching_book_title_list[0]
 
-            # 정보 수정
-            self.book_link.config(text="")
+        # curl 요청
+        # curl "이미지 주소" > "저장 될 이미지 파일 이름"
+        book = 교재선택_window.searching_result[first_book_title]
+        교재선택_window.present_book_title = first_book_title
+        교재선택_window.present_book = book
+        url = book["cover"]
 
-            self.book_description.config(text="")
+        os.system("curl " + url + " > ignore_image\교재선택_image_file.jpg")
 
-            # 링크 수정
+        # 이미지 크기 조정
+        size_adjusting_image = Image.open("ignore_image\교재선택_image_file.jpg")
+        image = size_adjusting_image.resize(
+            (size_adjusting_image.size[0] * 2, size_adjusting_image.size[1] * 2), Image.ANTIALIAS
+        )
 
-            self.open_web_button.config(command=lambda: print("웹 연결x"))
+        resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
 
-            # 검색 순서 수정
-            self.searching_order.config(text="/")
+        self.book_image.config(image=resized_image, text="")
 
+        # 타이틀 수정
+        self.book_title.config(text="제목: \n%s" % first_book_title)
+
+        # 정보 수정
+        book_link_text = book["link"]
+        self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
+
+        if book["description"] != "":
+            book_description_text = book["description"]
+            self.book_description.config(text="교재 설명: \n%s" % book_description_text)
         else:
-            교재선택_window.searching_book_title_list = list(교재선택_window.searching_result.keys())
-            교재선택_window.book_index = 0
-            교재선택_window.book_count = len(교재선택_window.searching_result)
+            self.book_description.config(text="교재 설명: \n해당 사이트에서 교재정보를 제공하지 않습니다.")
 
-            # 책제목 리스트
-            first_book_title = 교재선택_window.searching_book_title_list[0]
+        # 링크 수정
+        def open_web():
+            webbrowser.open(book["link"])
 
-            # curl 요청
-            # curl "이미지 주소" > "저장 될 이미지 파일 이름"
-            book = 교재선택_window.searching_result[first_book_title]
-            교재선택_window.present_book_title = first_book_title
-            교재선택_window.present_book = book
-            url = book["cover"]
+        self.open_web_button.config(command=open_web)
 
-            os.system("curl " + url + " > ignore_image\교재선택_image_file.jpg")
-
-            # 이미지 크기 조정
-            size_adjusting_image = Image.open("ignore_image\교재선택_image_file.jpg")
-            image = size_adjusting_image.resize(
-                (150, 188),  # 어떤지 보기 #어떤지 보기#어떤지 보기#어떤지 보기#어떤지 보기  #어떤지 보기
-                Image.ANTIALIAS,
-            )
-
-            resized_image = ImageTk.PhotoImage(image, master=self)  # 새창에서 그림띄우면 마스터 정의 꼭!
-
-            self.book_image.config(image=resized_image)
-
-            # 타이틀 수정
-            self.book_title.config(text="제목: \n%s" % first_book_title)
-
-            # 정보 수정
-            book_link_text = book["link"]
-            self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
-
-            if book["description"] != "":
-                book_description_text = book["description"]
-                self.book_description.config(text="교재 설명: \n%s" % book_description_text)
-            else:
-                self.book_description.config(text="교재 설명: \n해당 사이트에서 교재정보를 제공하지 않습니다.")
-
-            # 링크 수정
-            def open_web():
-                webbrowser.open(book["link"])
-
-            self.open_web_button.config(command=open_web)
-
-            # 검색 순서 수정
-            searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
-            self.searching_order.config(text=searching_order_text)
+        # 검색 순서 수정
+        searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
+        self.searching_order.config(text=searching_order_text)
 
         self.mainloop()
 
     # 이전 검색결과
     def show_prior_book(self):
-        if not 교재선택_window.searching_result == {}:
+        index_moving = -1
 
-            index_moving = -1
+        if 교재선택_window.book_count == 0:
+            return
 
-            if 교재선택_window.book_count == 0:
-                return
+        # 인덱스 조정
+        교재선택_window.book_index += index_moving
+        if 교재선택_window.book_index < 0:
+            교재선택_window.book_index += 교재선택_window.book_count
+        elif 교재선택_window.book_index >= 교재선택_window.book_count:
+            교재선택_window.book_index -= 교재선택_window.book_count
 
-            # 인덱스 조정
-            교재선택_window.book_index += index_moving
-            if 교재선택_window.book_index < 0:
-                교재선택_window.book_index += 교재선택_window.book_count
-            elif 교재선택_window.book_index >= 교재선택_window.book_count:
-                교재선택_window.book_index -= 교재선택_window.book_count
+            # 책제목 리스트
+        book_title = 교재선택_window.searching_book_title_list[교재선택_window.book_index]
 
-                # 책제목 리스트
-            book_title = 교재선택_window.searching_book_title_list[교재선택_window.book_index]
+        # curl 요청
+        # curl "이미지 주소" > "저장 될 이미지 파일 이름"
+        book = 교재선택_window.searching_result[book_title]
+        교재선택_window.present_book_title = book_title
+        교재선택_window.present_book = book
+        url = book["cover"]
 
-            # curl 요청
-            # curl "이미지 주소" > "저장 될 이미지 파일 이름"
-            book = 교재선택_window.searching_result[book_title]
-            교재선택_window.present_book_title = book_title
-            교재선택_window.present_book = book
-            url = book["cover"]
+        os.system("curl " + url + " > ignore_image\교재선택_image_file.jpg")
 
-            os.system("curl " + url + " > ignore_image\교재선택_image_file.jpg")
+        # 이미지 크기 조정
+        size_adjusting_image = Image.open("ignore_image\교재선택_image_file.jpg")
+        image = size_adjusting_image.resize(
+            (size_adjusting_image.size[0] * 2, size_adjusting_image.size[1] * 2), Image.ANTIALIAS
+        )
 
-            # 이미지 크기 조정
-            size_adjusting_image = Image.open("ignore_image\교재선택_image_file.jpg")
-            image = size_adjusting_image.resize(
-                (150, 188),
-                Image.ANTIALIAS,
-            )
+        resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
 
-            resized_image = ImageTk.PhotoImage(image, master=self)  # 새창에서 그림띄우면 마스터 정의 꼭!
+        self.book_image.config(image=resized_image, text="")
 
-            self.book_image.config(image=resized_image, text="")
+        # 타이틀 수정
+        self.book_title.config(text="제목: \n%s" % book_title)
 
-            # 타이틀 수정
-            self.book_title.config(text="제목: \n%s" % book_title)
+        # 정보 수정
+        book_link_text = book["link"]
+        self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
 
-            # 정보 수정
-            book_link_text = book["link"]
-            self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
+        book_description_text = book["description"]
+        self.book_description.config(text="교재 설명: \n%s" % book_description_text)
 
-            book_description_text = book["description"]
-            self.book_description.config(text="교재 설명: \n%s" % book_description_text)
+        # 링크 수정
+        def open_web():
+            webbrowser.open(book["link"])
 
-            # 링크 수정
-            def open_web():
-                webbrowser.open(book["link"])
+        self.open_web_button.config(command=open_web)
 
-            self.open_web_button.config(command=open_web)
+        # 검색 순서 수정
+        searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
+        self.searching_order.config(text=searching_order_text)
 
-            # 검색 순서 수정
-            searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
-            self.searching_order.config(text=searching_order_text)
-
-            self.mainloop()
+        self.window.mainloop()
 
     # 다음 검색결과
     def show_next_book(self):
-        if not 교재선택_window.searching_result == {}:
-            index_moving = 1
+        index_moving = 1
 
-            # 인덱스 조정
-            교재선택_window.book_index += index_moving
-            if 교재선택_window.book_index < 0:
-                교재선택_window.book_index += 교재선택_window.book_count
-            elif 교재선택_window.book_index >= 교재선택_window.book_count:
-                교재선택_window.book_index -= 교재선택_window.book_count
+        # 인덱스 조정
+        교재선택_window.book_index += index_moving
+        if 교재선택_window.book_index < 0:
+            교재선택_window.book_index += 교재선택_window.book_count
+        elif 교재선택_window.book_index >= 교재선택_window.book_count:
+            교재선택_window.book_index -= 교재선택_window.book_count
 
-            if 교재선택_window.book_count == 0:
-                return
+        if 교재선택_window.book_count == 0:
+            return
 
-                # 책제목 리스트
-            book_title = 교재선택_window.searching_book_title_list[교재선택_window.book_index]
+            # 책제목 리스트
+        book_title = 교재선택_window.searching_book_title_list[교재선택_window.book_index]
 
-            # curl 요청
-            # curl "이미지 주소" > "저장 될 이미지 파일 이름"
-            book = 교재선택_window.searching_result[book_title]
-            교재선택_window.present_book_title = book_title
-            교재선택_window.present_book = book
-            url = book["cover"]
+        # curl 요청
+        # curl "이미지 주소" > "저장 될 이미지 파일 이름"
+        book = 교재선택_window.searching_result[book_title]
+        교재선택_window.present_book_title = book_title
+        교재선택_window.present_book = book
+        url = book["cover"]
 
-            os.system("curl " + url + " > ignore_image\교재선택_image_file.jpg")
+        os.system("curl " + url + " > ignore_image\교재선택_image_file.jpg")
 
-            # 이미지 크기 조정
-            size_adjusting_image = Image.open("ignore_image\교재선택_image_file.jpg")
-            image = size_adjusting_image.resize(
-                (150, 188),
-                Image.ANTIALIAS,
-            )
+        # 이미지 크기 조정
+        size_adjusting_image = Image.open("ignore_image\교재선택_image_file.jpg")
+        image = size_adjusting_image.resize(
+            (size_adjusting_image.size[0] * 2, size_adjusting_image.size[1] * 2), Image.ANTIALIAS
+        )
 
-            resized_image = ImageTk.PhotoImage(image, master=self)  # 새창에서 그림띄우면 마스터 정의 꼭!
+        resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
 
-            self.book_image.config(image=resized_image, text="")
+        self.book_image.config(image=resized_image, text="")
 
-            # 타이틀 수정
-            self.book_title.config(text="제목: \n%s" % book_title)
+        # 타이틀 수정
+        self.book_title.config(text="제목: \n%s" % book_title)
 
-            # 정보 수정
-            book_link_text = book["link"]
-            self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
+        # 정보 수정
+        book_link_text = book["link"]
+        self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
 
-            book_description_text = book["description"]
-            self.book_description.config(text="교재 설명: \n%s" % book_description_text)
+        book_description_text = book["description"]
+        self.book_description.config(text="교재 설명: \n%s" % book_description_text)
 
-            # 링크 수정
-            def open_web():
-                webbrowser.open(book["link"])
+        # 링크 수정
+        def open_web():
+            webbrowser.open(book["link"])
 
-            self.open_web_button.config(command=open_web)
+        self.open_web_button.config(command=open_web)
 
-            # 검색 순서 수정
-            searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
-            self.searching_order.config(text=searching_order_text)
+        # 검색 순서 수정
+        searching_order_text = "%s / %s" % (교재선택_window.book_index + 1, 교재선택_window.book_count)
+        self.searching_order.config(text=searching_order_text)
 
-            self.mainloop()
+        self.window.mainloop()
 
     # 내교재 찜하기 버튼
     def choose_my_book(self):
-        if not 교재선택_window.searching_result == {}:
-            choose_option(교재선택_window.present_book_title, 교재선택_window.present_book)
+
+        choose_option(교재선택_window.present_book_title, 교재선택_window.present_book)
 
 
 class choose_option:
