@@ -37,14 +37,14 @@ class API_loading:
     def return_subject_id(self):
         return self.subject_id_dict
 
-    def load_aladin_book(self, keyword):  # 검색하고 싶은 책을 입력받아 검색결과 리턴
+    def load_aladin_book(self, keyword, CID):  # 검색하고 싶은 책을 입력받아 검색결과 리턴
         need_list = {"link", "priceStandard", "cover", "description"}
         input_word = keyword
         input_choice = 0
         query = "&query=" + urllib.parse.quote(input_word)
         url = (
-            "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbsmartapple031950001%s&MaxResults=20&CategoryId=76000&output=JS&Version=20131101"
-            % query
+            "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbsmartapple031950001%s&MaxResults=20&CategoryId=%s&output=JS&Version=20131101"
+            % (query, CID)
         )
 
         request = urllib.request.Request(url)
