@@ -20,18 +20,18 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.window.geometry("400x800")
         self.canvas=Canvas(self.window, width=400, height=400)  #트킨터에서 도형을 그리기 위한 바탕 설정
         self.canvas.place(x=0, y=0) #바탕 위치 설정
-        self.clock=self.canvas.create_oval(x1 = 40, y1 = 40, x2 = 360, y2 = 360, start=0, extent=0)    #시계정의
+        self.clock=self.canvas.create_oval(40, 40, 360, 360)    #시계정의
         self.planned_time={}      #여기서 계획표에서 공부 시작시간, 끝내는 시간 보여주는 부채꼴을 만들 것임
         self.plan_list=self.plan_list_for_month[planning_day]
         self.plan_list_key=self.plan_list.keys()  #공부계획의 키(교재)를 추출하여 리스트로 정리
-        for i in range(len(self.today_plan_list)-1):    #시간표를 보여주는 부채꼴 생성
+        for i in range(len(self.plan_list)-1):    #시간표를 보여주는 부채꼴 생성
             if i>10:
                 break
             angle={}
             angle=self.correct_angle(start_hour=self.plan_list[self.plan_list_key[i]]["start_time"]["hour"], start_minute=self.plan_list[self.plan_list_key[i]]["start_time"]["minute"], end_hour=self.plan_list[self.plan_list_key[i]]["end_time"]["hour"], end_minute=self.plan_list[self.plan_list_key[i]]["end_time"]["minute"])
             for_start=angle[0]
             for_extent=angle[1]
-            self.planned_time[i]=self.canvas.create_arc(x1=40, y1=40, x2=360, y2=360, start=for_start, extent=for_extent)
+            self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent)
 
         # 책 전체개수/현재 위치
         self.searching_order = Label(self.window, font=("배달의민족 주아", 10), text="  /  ")
@@ -43,6 +43,7 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
 
         #계획 등록 버튼
         self.plan_maker_button = Button(self.window, text="저장", font= ("배달의민족 주아", 10), command = lambda: self.plan_maker(planning_day=planning_day))
+        
 
         #다음 교재 보여주기 버튼
         self.next_button = Button(self.window, text = "다음 교재로 가기", font = ("배달의민족 주아", 10), command = lambda: self.show_book(index_moving = 1))
@@ -59,13 +60,15 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         #시간 입력
         self.start_time = Entry(self.window, font=("배달의민족 주아", 10))
         self.end_time = Entry(self.window, font=("배달의민족 주아", 10))
-        self.start_time.place(x=160, y=570, width=140, height=50)
-        self.end_time.place(x=160, y=620, width=140, height=50)
+        self.start_time.place(x=200, y=570, width=140, height=50)
+        self.end_time.place(x=200, y=620, width=140, height=50)
 
         # 기타 인스턴스변수 생성
         self.book_index = 0
         self.present_book = {}
         self.present_book_title = ""
+
+        self.show_book()
 
     def plan_maker(self, planning_day):
         start_time={
