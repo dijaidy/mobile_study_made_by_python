@@ -4,6 +4,7 @@ import sys
 import os
 import time
 
+
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from information_management.api_loading import API_loading
 
@@ -23,6 +24,8 @@ menu_font = ("배달의민족 주아", 15)
 submenu_font = ("배달의민족 주아", 17)
 
 api_loading_source = API_loading()
+
+교재선택창 = 0
 
 
 class start_window:

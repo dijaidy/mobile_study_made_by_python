@@ -13,6 +13,12 @@ class 찜한교재_manage_user_information:  # 교재등록 밑 관리
         book_dict["book_type"] = book_type  # 교재의 종류(ex:예습교재, 시험교재)
         self.chosen_book_dict[book_title] = book_dict
 
+    def delete_chosen_book_dict(self, book_title):
+        if book_title in self.chosen_book_dict:
+            self.chosen_book_dict.pop(book_title)
+        else:
+            print('제거하려는 찜한교재가 없음')
+
     def save_chosen_book_to_file(self):  # 교재정보를 파일에 저장
         with open("information\chosen_book_file.json", "w", encoding="UTF-8") as out_file:
             json.dump(self.chosen_book_dict, out_file, ensure_ascii=False)

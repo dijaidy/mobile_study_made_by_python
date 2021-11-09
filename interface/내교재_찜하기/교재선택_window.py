@@ -22,6 +22,7 @@ from information_management.api_loading import API_loading
 from information_management.user_information import 찜한교재_manage_user_information
 from information_management.user_information import 과목_manage_user_information
 
+
 # 폰트 설정
 title_font = ("배달의민족 주아", 23)
 menu_font = ("배달의민족 주아", 15)
@@ -30,6 +31,7 @@ submenu_font = ("배달의민족 주아", 17)
 api_loading_source = API_loading()
 찜한교재 = 찜한교재_manage_user_information()
 과목 = 과목_manage_user_information()
+
 
 
 # sub_menu 윈도우
@@ -43,6 +45,10 @@ class 교재선택_window:
     searching_result = {}
     searching_book_title_list = []
     book_count = 0
+
+
+    # 체크 표시 여부
+    unplaced_check = True
 
     def __init__(self):
         # 창 설정
@@ -137,6 +143,9 @@ class 교재선택_window:
         )
         self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
 
+        # 찜한교재 해제 버튼
+        self.release_chosen_book_button = Button(self.window, text='찜한교재 해제', font=menu_font, command=self.release_chosen_book)
+
         # 교재 이미지
         self.book_image = Label(self.window, borderwidth=3, relief="ridge")
         self.book_image.place(x=25, y=125, height=188, width=150)
@@ -148,6 +157,16 @@ class 교재선택_window:
         resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
         self.교재미선택_image = resized_image
         self.book_image.config(image=resized_image)
+
+        # 찜한교재 마크
+        size_adjusting_image = Image.open("image_sources\찜한교재_체크.png")
+        image = size_adjusting_image.resize((30, 30), Image.ANTIALIAS)
+
+        self.already_chosen_mark_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
+
+        self.already_chosen_mark = Label(self.window, image=self.already_chosen_mark_image)
+
+
 
         # 교재 타이틀
         self.book_title = Message(
@@ -203,6 +222,13 @@ class 교재선택_window:
         return (keyword, CID)
 
     def show_book_information(self):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
+        #체크표시 제거
+        if not 교재선택_window.unplaced_check:  #체크표시 돼있으면
+            self.already_chosen_mark.place_forget
+            교재선택_window.unplaced_check = True
+            self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
+            self.release_chosen_book_button.place_forget()
+
         # 검색 결과 책 모음 가져오고, 저장하기
         searching_result = api_loading_source.load_aladin_book(
             self.bring_keyword_and_CID()[0], self.bring_keyword_and_CID()[1]
@@ -234,6 +260,10 @@ class 교재선택_window:
             # 책제목 리스트
             first_book_title = 교재선택_window.searching_book_title_list[0]
 
+            self.represent_check(first_book_title)
+
+
+
             # curl 요청
             # curl "이미지 주소" > "저장 될 이미지 파일 이름"
             book = 교재선택_window.searching_result[first_book_title]
@@ -261,8 +291,11 @@ class 교재선택_window:
             book_link_text = book["link"]
             self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
 
-            book_description_text = book["description"]
-            self.book_description.config(text="교재 설명: \n%s" % book_description_text)
+            if book['description'] == "":
+                self.book_description.config(text= '교재 설명: \n위 교재는 교재 설명을 지원하지 않습니다.')
+            else:
+                book_description_text = book["description"]
+                self.book_description.config(text="교재 설명: \n%s" % book_description_text)
 
             # 링크 수정
             def open_web():
@@ -278,6 +311,7 @@ class 교재선택_window:
 
     # 이전 검색결과
     def show_prior_book(self):
+        
         if not 교재선택_window.searching_result == {}:
 
             index_moving = -1
@@ -294,6 +328,8 @@ class 교재선택_window:
 
                 # 책제목 리스트
             book_title = 교재선택_window.searching_book_title_list[교재선택_window.book_index]
+
+            self.represent_check(book_title)
 
             # curl 요청
             # curl "이미지 주소" > "저장 될 이미지 파일 이름"
@@ -322,8 +358,11 @@ class 교재선택_window:
             book_link_text = book["link"]
             self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
 
-            book_description_text = book["description"]
-            self.book_description.config(text="교재 설명: \n%s" % book_description_text)
+            if book['description'] == "":
+                self.book_description.config(text= '교재 설명: \n위 교재는 교재 설명을 지원하지 않습니다.')
+            else:
+                book_description_text = book["description"]
+                self.book_description.config(text="교재 설명: \n%s" % book_description_text)
 
             # 링크 수정
             def open_web():
@@ -355,6 +394,8 @@ class 교재선택_window:
                 # 책제목 리스트
             book_title = 교재선택_window.searching_book_title_list[교재선택_window.book_index]
 
+            self.represent_check(book_title)
+
             # curl 요청
             # curl "이미지 주소" > "저장 될 이미지 파일 이름"
             book = 교재선택_window.searching_result[book_title]
@@ -382,8 +423,11 @@ class 교재선택_window:
             book_link_text = book["link"]
             self.book_link.config(text="이미지 출처: \n%s" % book_link_text)
 
-            book_description_text = book["description"]
-            self.book_description.config(text="교재 설명: \n%s" % book_description_text)
+            if book['description'] == "":
+                self.book_description.config(text= '교재 설명: \n위 교재는 교재 설명을 지원하지 않습니다.')
+            else:
+                book_description_text = book["description"]
+                self.book_description.config(text="교재 설명: \n%s" % book_description_text)
 
             # 링크 수정
             def open_web():
@@ -400,14 +444,95 @@ class 교재선택_window:
     # 내교재 찜하기 버튼
     def choose_my_book(self):
         if not 교재선택_window.searching_result == {}:
-            choose_option(교재선택_window.present_book_title, 교재선택_window.present_book)
+            option_window = choose_option(교재선택_window.present_book_title, 교재선택_window.present_book)
+            option_window.confirm_button.bind("<Button-1>", self.callback)
+    
+    def release_chosen_book(self):
+        self.background = Label(self.window, relief=RIDGE, borderwidth=3)
+        self.background.place(x=50, y=300, width=300, height=200)
 
+        # 정말 찜한교재를 해제하시겠습니까?
+        self.warning_widget_title = Label(
+            self.window, text="정말 찜한교재를 해제하시겠습니까?", justify=CENTER, font=("배달의민족 주아", 12)
+        )
+        self.warning_widget_title.place(x=60, y=305, width=280, height=30)
+
+        # 확인버튼
+
+        self.sub_confirm_button = Button(
+            self.window,
+            text="확인",
+            font=("배달의민족 주아", 12),
+            justify=CENTER,
+            command=self.delete_교재_카테고리_book,
+        )
+        self.sub_confirm_button.place(x=75, y=375, width=100, height=75)
+
+        # 취소
+        self.sub_cancel_button = Button(
+            self.window,
+            text="취소",
+            font=("배달의민족 주아", 12),
+            justify=CENTER,
+            command=self.close_warning_widget,
+        )
+        self.sub_cancel_button.place(x=205, y=375, width=100, height=75)
+
+    def delete_교재_카테고리_book(self):
+        찜한교재.delete_chosen_book_dict(교재선택_window.present_book_title)
+        찜한교재.save_chosen_book_to_file()
+        self.uncheck_without_condition()
+        self.close_warning_widget()
+    
+    def close_warning_widget(self):
+        self.warning_widget_title.place_forget()
+        self.sub_cancel_button.place_forget()
+        self.sub_confirm_button.place_forget()
+        self.background.place_forget()
+
+    def represent_check(self, book_title):
+        # 선택된 교재 리스트
+        찜한교재_dict = 찜한교재.call_chosen_book_from_file()
+        찜한교재_list = 찜한교재_dict.keys()
+
+        if book_title in 찜한교재_list:
+            if 교재선택_window.unplaced_check:   #체크표시 안돼있으면
+                self.already_chosen_mark.place(x=175, y=125, height=40, width=40)
+                교재선택_window.unplaced_check = False
+                self.release_chosen_book_button.place(relx=0, relwidth=1, y=800 - 100, height=50)
+                self.choose_my_textbook.place_forget()
+
+        else:
+            if not 교재선택_window.unplaced_check:  #체크표시 돼있으면
+                self.already_chosen_mark.place_forget()
+                교재선택_window.unplaced_check = True
+                self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
+                self.release_chosen_book_button.place_forget()
+    
+    def check_without_condition(self):
+
+        self.already_chosen_mark.place(x=175, y=125, height=40, width=40)
+        교재선택_window.unplaced_check = False
+        self.release_chosen_book_button.place(relx=0, relwidth=1, y=800 - 100, height=50)
+        self.choose_my_textbook.place_forget()
+
+    def uncheck_without_condition(self):
+
+        self.already_chosen_mark.place_forget()
+        교재선택_window.unplaced_check = True
+        self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
+        self.release_chosen_book_button.place_forget()
+
+    def callback(self, event):
+        self.check_without_condition()
+        print('거의 완성')
 
 class choose_option:
     subject_list = []
     subject_list = 과목.call_subject_list_from_file()
     present_book_title = ""
     present_book = ""
+    result = 0
 
     def __init__(self, present_book_title, present_book):
         self.window = Tk()
@@ -539,6 +664,10 @@ class choose_option:
             command=self.close_warning_widget,
         )
         self.sub_cancel_button.place(x=205, y=125, width=70, height=50)
+
+    def close_window(self):
+        choose_result = -1 #교재선택 취소됨
+        self.window.destroy()
 
     def close_warning_widget(self):
         self.warning_widget_title.place_forget()
