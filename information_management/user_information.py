@@ -3,8 +3,9 @@ import json
 import time
 
 
-class 찜한교재_manage_user_information:  # 교재등록 밑 관리
+class 찜한교재_manage_user_information(object):  # 교재등록 밑 관리
     def __init__(self):
+        super(찜한교재_manage_user_information, self)
         self.chosen_book_dict = {}
         self.chosen_book_dict = self.call_chosen_book_from_file()
 
@@ -47,17 +48,19 @@ class 과목_manage_user_information:  # 유저의 학습 과목 관리
             return json.load(out_file)["subject"]
 
 
-class 공부계획_manage_user_information:  # 공부계획한 것들 저장
+class 공부계획_manage_user_information(object):  # 공부계획한 것들 저장
     def __init__(self):
+        super(공부계획_manage_user_information, self).__init__()
         self.Korean_time = time.localtime(time.time())
-        self.plan_list_for_month = {}
+        self.plan_list_for_month = []
         self.plan_list_for_month = self.call_plan_list_from_file()  # 전체 계획 저장
         self.plan_list = {}
 
     def plus_plan_list(self, book_dict, start_time, end_time, day):
         # start_time은 시작시간, end_time은 끝나는 시간, day는 실행날짜
-        self.plan_list = {"book": book_dict, "start_time": start_time, "end_time": end_time}
-        self.plan_list_for_month[day] = self.plan_list_for_month[day] + self.plan_list
+        plan_list = {"book": book_dict, "start_time": start_time, "end_time": end_time}
+        self.plan_list_for_month[day][len(self.plan_list_for_month[day])] = plan_list
+        self.save_plan_list_to_file()
 
     def save_plan_list_to_file(self):  # 파일로 저장
         with open("information\plan_list_file.json", "w", encoding="UTF-8") as out_file:

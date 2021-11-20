@@ -1,7 +1,6 @@
 from tkinter import *
 import sys
 import os
-import webbrowser
 from tkinter import ttk as tk
 from PIL import Image, ImageTk
 sys.path.append(
@@ -13,7 +12,7 @@ from information_management.user_information import 공부계획_manage_user_inf
 
 class 일일공부계획_window(공부계획_manage_user_information, 찜한교재_manage_user_information):
     def __init__(self, planning_day):
-        super().__init__()
+        super(일일공부계획_window, self).__init__()
         # 창 설정
         self.window = Tk()
         self.window.title("일일공부계획")
@@ -23,15 +22,18 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.clock=self.canvas.create_oval(40, 40, 360, 360)    #시계정의
         self.planned_time={}      #여기서 계획표에서 공부 시작시간, 끝내는 시간 보여주는 부채꼴을 만들 것임
         self.plan_list=self.plan_list_for_month[planning_day]
-        self.plan_list_key=self.plan_list.keys()  #공부계획의 키(교재)를 추출하여 리스트로 정리
-        for i in range(len(self.plan_list)-1):    #시간표를 보여주는 부채꼴 생성
-            if i>10:
-                break
-            angle={}
-            angle=self.correct_angle(start_hour=self.plan_list[self.plan_list_key[i]]["start_time"]["hour"], start_minute=self.plan_list[self.plan_list_key[i]]["start_time"]["minute"], end_hour=self.plan_list[self.plan_list_key[i]]["end_time"]["hour"], end_minute=self.plan_list[self.plan_list_key[i]]["end_time"]["minute"])
-            for_start=angle[0]
-            for_extent=angle[1]
-            self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent)
+        self.plan_list_key=self.use_plan_list_for_month()  #공부계획의 키(교재)를 추출하여 리스트로 정리
+        if (self.plan_list_key==False): 
+            self.canvas.creat_text(text="오늘치 계획이 없습니다!")
+        else: 
+            for i in range(len(self.plan_list)-1):    #시간표를 보여주는 부채꼴 생성
+                if i>10:
+                    break
+                angle={}
+                angle=self.correct_angle(start_hour=self.plan_list[i]["start_time"]["hour"], start_minute=self.plan_list[self.plan_list_key[i]]["start_time"]["minute"], end_hour=self.plan_list[self.plan_list_key[i]]["end_time"]["hour"], end_minute=self.plan_list[self.plan_list_key[i]]["end_time"]["minute"])
+                for_start=angle[0]
+                for_extent=angle[1]
+                self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent)
 
         # 책 전체개수/현재 위치
         self.searching_order = Label(self.window, font=("배달의민족 주아", 10), text="  /  ")
@@ -39,22 +41,22 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         
         #이전 교재 보여주기 버튼
         self.prior_button = Button(self.window, text = "이전 교재로 가기", font = ("배달의민족 주아", 10), command = lambda: self.show_book(index_moving = -1))
-        self.prior_button.place(relx = 0, y = 770, height = 30, width = 150)
+        self.prior_button.place(relx = 0, y = 770, height = 30, relwidth = 1/3)
 
         #계획 등록 버튼
         self.plan_maker_button = Button(self.window, text="저장", font= ("배달의민족 주아", 10), command = lambda: self.plan_maker(planning_day=planning_day))
-        
+        self.plan_maker_button.place(relx=1/3, y=770, height = 30, relwidth= 1/3)
 
         #다음 교재 보여주기 버튼
         self.next_button = Button(self.window, text = "다음 교재로 가기", font = ("배달의민족 주아", 10), command = lambda: self.show_book(index_moving = 1))
-        self.next_button.place(relx = 2/3, y = 770, height = 30, width = 150)
+        self.next_button.place(relx = 2/3, y = 770, height = 30, relwidth = 1/3)
 
         # 교재 이미지
         self.book_image = Label(self.window, borderwidth=2, relief="sunken", text="자료 없음")
         self.book_image.place(x=25, y=470, height=200, width=160)
 
         # 교재 타이틀
-        self.book_title = Message(self.window, font=("배달의민족 주아", 13))
+        self.book_title = Message(self.window, font=("배달의민족 주아", 12))
         self.book_title.place(x=0, y=400, height=70, width=160)
 
         #시간 입력
@@ -116,7 +118,16 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.book_title.config(text = book_title_text)
 
         #인덱스 수정
-        searching_order_text = "%s / %s" % (len(self.chosen_book_dict), self.book_index+1)
+        searching_order_text = "%s / %s" % (self.book_index+1, len(self.chosen_book_dict))
         self.searching_order.config(text=searching_order_text)
 
         self.window.mainloop()  
+    def use_plan_list_for_month(self):
+        plan_keys=[]
+        try:
+            for i in len(self.plan_list):
+                plan_keys[i]=self.plan_list[i]["book"].keys()
+            return plan_keys
+        except TypeError:
+            return False
+            print("입력된 내용이 없습니다!")

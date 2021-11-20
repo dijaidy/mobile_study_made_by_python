@@ -21,7 +21,7 @@ submenu_font = ("배달의민족 주아", 17)
 class 찜한교재목록_window(찜한교재_manage_user_information):
     def __init__(self):
         # 찜한교재_manage_user_information 상속받기
-        super().__init__()
+        super(찜한교재목록_window, self).__init__()
         # 창 설정
         self.window = Tk()
         self.window.title("찜한교재현황")
