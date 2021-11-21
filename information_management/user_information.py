@@ -58,9 +58,13 @@ class 공부계획_manage_user_information(object):  # 공부계획한 것들 �
 
     def plus_plan_list(self, book_dict, start_time, end_time, day):
         # start_time은 시작시간, end_time은 끝나는 시간, day는 실행날짜
-        dict_key="book"+str(len(self.plan_list_for_month[day]))
-        plan_list = {dict_key : book_dict, "start_time": start_time, "end_time": end_time}
-        self.plan_list_for_month[day].append(plan_list)
+        book_dict["start_time"]=start_time
+        book_dict["end_time"]=end_time
+        self.plan_list_for_month[day].append(book_dict)
+        self.save_plan_list_to_file()
+
+    def delete_plan_list(self, book_dict, day):
+        del(self.plan_list_for_month[day][book_dict])
         self.save_plan_list_to_file()
 
     def save_plan_list_to_file(self):  # 파일로 저장
@@ -81,11 +85,11 @@ class 공부계획_manage_user_information(object):  # 공부계획한 것들 �
         end_hour=int(end_hour)
         end_minute=int(end_minute)
         for_start = end_hour * 15 + end_minute / 4
-        for_extent = (end_hour - start_hour) * 15 + (end_minute - start_minute) / 4
-        if for_start > 90:
-            for_start = 450 - for_start
+        if end_hour>start_hour:
+            for_extent = (end_hour - start_hour) * 15 + (end_minute - start_minute) / 4
         else:
-            for_start = 90 - for_start
+            for_extent = (24+end_hour-start_hour) * 15 + (end_minute - start_minute) / 4
+        for_start = 90 - for_start
         return [for_start, for_extent]
 
 

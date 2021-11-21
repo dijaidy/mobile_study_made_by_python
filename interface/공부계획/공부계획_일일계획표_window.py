@@ -20,10 +20,11 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.window.title("일일공부계획")
         self.window.geometry("400x800")
         self.canvas=Canvas(self.window, width=400, height=400)  #트킨터에서 도형을 그리기 위한 바탕 설정
-        self.canvas.place(x=0, y=0) #바탕 위치 설정
-        self.clock=self.canvas.create_oval(40, 40, 360, 360)    #시계정의
+        self.canvas.place(x=0, y=0)
+        self.clock=self.canvas.create_oval(40, 40, 360, 360, fill="LightSkyBlue3")    #시계정의
         self.planned_time={}      #여기서 계획표에서 공부 시작시간, 끝내는 시간 보여주는 부채꼴을 만들 것임
         self.plan_list=self.plan_list_for_month[planning_day]
+        self.planning_day=planning_day
         self.show_plan()
 
         # 책 전체개수/현재 위치
@@ -51,8 +52,8 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.book_title.place(x=0, y=400, height=70, width=160)
 
         #시간 입력
-        self.start_time = Entry(self.window, font=("배달의민족 주아", 10))
-        self.end_time = Entry(self.window, font=("배달의민족 주아", 10))
+        self.start_time = Entry(self.window, text="", font=("배달의민족 주아", 10))
+        self.end_time = Entry(self.window, text="", font=("배달의민족 주아", 10))
         self.start_time.place(x=200, y=570, width=140, height=50)
         self.end_time.place(x=200, y=620, width=140, height=50)
 
@@ -63,7 +64,7 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
 
         self.show_book()
 
-    def plan_maker(self, planning_day):
+    def plan_maker(self):
         start_time={
             "hour" : self.start_time.get()[0:2], 
             "minute" : self.start_time.get()[2:]
@@ -72,9 +73,16 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
             "hour" : self.end_time.get()[0:2], 
             "minute" : self.end_time.get()[2:]
         }
-        self.plus_plan_list(book_dict={self.present_book_title : self.chosen_book_dict[self.present_book_title]}, start_time=start_time, end_time=end_time, day=planning_day)
-        self.show_plan()
+        self.plus_plan_list(book_dict={self.present_book_title : self.chosen_book_dict[self.present_book_title]}, start_time=start_time, end_time=end_time, day=self.planning_day)
         show_message("교재가 저장되었습니다\n중복저장될 수 있으므로 유의하시길 바랍니다")
+        self.plan_list=self.plan_list_for_month[self.planning_day]
+        self.show_plan()
+
+    def plan_destroyer(self, book_dict):
+        self.delete_plan_list(book_dict=book_dict, day=self.planning_day)
+        show_message("계획이 삭제되었습니다")
+        self.plan_list=self.plan_list_for_month[self.planning_day]
+        self.show_plan()
 
     def show_book(self, index_moving = 0):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
         # 인덱스 조정
@@ -114,32 +122,46 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         searching_order_text = "%s / %s" % (self.book_index+1, len(self.chosen_book_dict))
         self.searching_order.config(text=searching_order_text)
 
+        #입력칸 초기화
+        self.start_time.delete(0, "end")
+        self.end_time.delete(0, "end")
+
+        #현재 보여주는 책으로 계획을 세웠는가에 따라 버튼의 기능을 저장, 삭제로 바꿈
+        simple_bool=False
+        i=0
+        while (i<len(self.plan_list)):
+            if (self.present_book_title in self.plan_list[i].keys()):
+                simple_bool=True
+                break
+            i+=1
+        if (simple_bool==False):
+            self.plan_maker_button = Button(self.window, text="저장", font= ("배달의민족 주아", 10), command = lambda: self.plan_maker())
+            self.plan_maker_button.place(relx=1/3, y=770, height = 30, relwidth= 1/3)
+        else:
+            del(self.planned_time[i])
+            self.plan_maker_button = Button(self.window, text="삭제", font= ("배달의민족 주아", 10), command= lambda: self.plan_destroyer(i))
+            self.plan_maker_button.place(relx=1/3, y=770, height = 30, relwidth= 1/3)
+            #계획 중에 있는 책이면 계획한 시간대가 어딘지 보여줌
+            self.start_time.insert(0, self.plan_list[i]["start_time"]["hour"]+self.plan_list[i]["start_time"]["minute"])
+            self.end_time.insert(0, self.plan_list[i]["end_time"]["hour"]+self.plan_list[i]["end_time"]["minute"])
+
         self.window.mainloop()  
 
-    def use_plan_list_for_month(self):  
-        plan_keys=[]
-        i=0
-        if len(self.plan_list)>0:
-            print(1)
-            while (i<len(self.plan_list)):
-                plan_keys.append(self.plan_list[i]["book"+str(i)])
-            return plan_keys
-        else:
-            return False
-
     def show_plan(self):
-        self.plan_list_key=self.use_plan_list_for_month()  #공부계획의 키(교재)를 추출하여 리스트로 정리
-        if (self.plan_list_key==False): 
-           show_message("이 날에는 아무런 계획이 없습니다") 
+        angle=[]
+        if (len(self.plan_list)==0): 
+            show_message("이 날에는 아무런 계획이 없습니다") 
         else: 
             i=0
+            self.canvas.delete("all")
+            self.clock=self.canvas.create_oval(40, 40, 360, 360, fill="LightSkyBlue3")    #시계정의
             while(i<=len(self.plan_list)-1):    #시간표를 보여주는 부채꼴 생성
-                print(1)
-                angle=[]
                 angle=self.correct_angle(start_hour=self.plan_list[i]["start_time"]["hour"], start_minute=self.plan_list[i]["start_time"]["minute"], end_hour=self.plan_list[i]["end_time"]["hour"], end_minute=self.plan_list[i]["end_time"]["minute"])
-                print("test angle", angle)
                 for_start=angle[0]
                 for_extent=angle[1]
-                for_text=self.plan_list[i]["start_time"]["hour"]+":"+self.plan_list[i]["start_time"]["minute"]+" ~ "+self.plan_list[i]["end_time"]["hour"]+":"+self.plan_list[i]["start_time"]["minute"]+"\n"+self.plan_list[i]["book"+str(i)].keys()
-                self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent, Text=for_text, font=("배달의민족 주아", 9))
+                if ((i%2)==0):
+                    self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent, fill="SteelBlue1")
+                else:
+                    self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent, fill="PaleGreen1")
+                
                 i+=1
