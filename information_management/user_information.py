@@ -58,8 +58,9 @@ class 공부계획_manage_user_information(object):  # 공부계획한 것들 �
 
     def plus_plan_list(self, book_dict, start_time, end_time, day):
         # start_time은 시작시간, end_time은 끝나는 시간, day는 실행날짜
-        plan_list = {"book": book_dict, "start_time": start_time, "end_time": end_time}
-        self.plan_list_for_month[day][len(self.plan_list_for_month[day])] = plan_list
+        dict_key="book"+str(len(self.plan_list_for_month[day]))
+        plan_list = {dict_key : book_dict, "start_time": start_time, "end_time": end_time}
+        self.plan_list_for_month[day].append(plan_list)
         self.save_plan_list_to_file()
 
     def save_plan_list_to_file(self):  # 파일로 저장
@@ -75,13 +76,17 @@ class 공부계획_manage_user_information(object):  # 공부계획한 것들 �
         return self.Korean_time
 
     def correct_angle(self, start_hour, start_minute, end_hour, end_minute):  # 시계침 각도 조정
+        start_hour=int(start_hour)
+        start_minute=int(start_minute)
+        end_hour=int(end_hour)
+        end_minute=int(end_minute)
         for_start = end_hour * 15 + end_minute / 4
         for_extent = (end_hour - start_hour) * 15 + (end_minute - start_minute) / 4
         if for_start > 90:
             for_start = 450 - for_start
         else:
             for_start = 90 - for_start
-        return {for_start, for_extent}
+        return [for_start, for_extent]
 
 
 class users_information_manage:
@@ -104,3 +109,4 @@ class users_information_manage:
     def call_users_information_from_file(self):  # 파일 불러오기
         with open("information\plan_list_file.json", "r", encoding="UTF-8") as out_file:
             return json.load(out_file)
+
