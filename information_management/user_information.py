@@ -3,11 +3,12 @@ import json
 import time
 
 
-class 찜한교재_manage_user_information(object):  # 교재등록 밑 관리
+class 찜한교재_manage_user_information:  # 교재등록 밑 관리
     def __init__(self):
         super(찜한교재_manage_user_information, self)
         self.chosen_book_dict = {}
         self.chosen_book_dict = self.call_chosen_book_from_file()
+
 
     def plus_chosen_book_dict(self, book_title, book_dict, subject, book_type):  # 찜한 교재 목록에 추가
         book_dict["subject"] = subject  # 교재의 과목
@@ -27,6 +28,8 @@ class 찜한교재_manage_user_information(object):  # 교재등록 밑 관리
     def call_chosen_book_from_file(self):  # 파일 불러오기
         with open("information\chosen_book_file.json", "r", encoding="UTF-8") as out_file:
             return json.load(out_file)
+            
+        
 
 
 class 과목_manage_user_information:  # 유저의 학습 과목 관리
@@ -35,6 +38,7 @@ class 과목_manage_user_information:  # 유저의 학습 과목 관리
         self.subject_list = self.call_subject_list_from_file()
 
     def update_subject(self, subject_list):  # 과목추가
+        subject_list.sort()
         self.subject_list = subject_list
 
     def save_subject_list_to_file(self):  # 과목을 파일로 저장
@@ -48,7 +52,7 @@ class 과목_manage_user_information:  # 유저의 학습 과목 관리
             return json.load(out_file)["subject"]
 
 
-class 공부계획_manage_user_information(object):  # 공부계획한 것들 저장
+class 공부계획_manage_user_information:  # 공부계획한 것들 저장
     def __init__(self):
         super(공부계획_manage_user_information, self).__init__()
         self.Korean_time = time.localtime(time.time())

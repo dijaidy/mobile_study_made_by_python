@@ -95,6 +95,7 @@ class 교재선택_window:
             self.window, values=self.main_category_keys, state="readonly"
         )
         self.main_category_combobox.place(x=20, y=80, width=160, height=30)
+        print('콤보박스')
         self.main_category_combobox.current(0)
 
         # 서브 카테고리 콤보박스
