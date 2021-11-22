@@ -131,7 +131,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
 
         # 교재 이미지
         self.book_image = Label(self.book_frame, borderwidth=2, relief="sunken", text="자료 없음", width=120, height=160)
-        self.book_image.grid(row=1, column=0, rowspan=3)
+        self.book_image.grid(row=1, column=0, rowspan=2)
 
         # 이미지 크기 조정
         size_adjusting_image = Image.open("ignore_image\교재선택_image_file.jpg")
@@ -149,7 +149,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
 
         # 교재 정보
         self.book_info = Message(self.book_frame, font=('배달의민족 주아', 12), justify=LEFT, text='내용 테스트', width=265)
-        self.book_info.grid(row=2, column=1, columnspan=2, sticky=W)
+        self.book_info.grid(row=1, column=1, columnspan=2, sticky=NW, pady=5)
         #self.open_web_button = Button(
         #    self.window, font=menu_font, text="교재\n웹사이트\n오픈", padx=1, pady=1
         #)
@@ -160,11 +160,11 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.achievement_bar = tk.Progressbar(
             self.book_frame, maximum=100, length=240, variable=self.book_achievement
         )
-        self.achievement_bar.grid(row=3, column=1, sticky=S)
+        self.achievement_bar.grid(row=2, column=1, sticky=S)
         self.achievement_bar.config(value=50)
 
         self.book_achievement_text = Message(self.book_frame, font=('배달의민족 주아', 8), justify=CENTER, text='성취도\n0%', width=40)
-        self.book_achievement_text.grid(row=3, column=2, sticky=S)
+        self.book_achievement_text.grid(row=2, column=2, sticky=S)
 
         # 기타 인스턴스변수 생성
         #self.book_index = 0
