@@ -1,4 +1,5 @@
 from tkinter import *
+import time
 
 class 학교정보_window:
     def __init__(self):
@@ -6,3 +7,8 @@ class 학교정보_window:
         self.window = Tk()
         self.window.title("학교정보")
         self.window.geometry("400x800")
+
+        self.text=Label(self.window, text="지원하지 않는 기능입니다")
+        self.text.pack()
+        time.sleep(5)
+        self.window.destroy()

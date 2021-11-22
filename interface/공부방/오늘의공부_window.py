@@ -21,9 +21,10 @@ class 오늘의공부_window(공부계획_manage_user_information):
         self.studied_time={"hour" : 0, "minute": 0, "second" : 0} #총 공부시간
         self.show_you_late=Label(self.window, width=400, height=700, fill="")    #늦었으면 노랑, 제대로 끝냈으면 초록, 아직 하기 전이면 파랑
         self.show_you_late.place(x=0, y=100)
+        self.show_you_spend=Button(self.window, )
         self.show_studied_time=Label(self.window, text="총 공부시간:"+str(self.studied_time["hour"])+":"+str(self.studied_time["minute"])+":"+str(self.studied_time["second"]))  #총 공부시간 보여주기
         self.book_index=0
-        self.show_book_information()
+        self.show_book_information()    #책 정보보여줌
 
     def show_book_information(self, index_moving=0):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
         # 찜한 책 모음 가져오기
