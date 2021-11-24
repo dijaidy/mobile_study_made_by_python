@@ -127,52 +127,13 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.achievement_end_spinbox.bind('<ButtonRelease-1>', self.adjust_end_achievement)
 
         self.book_frame = LabelFrame(self.window, width=380, height=650)
-        self.book_frame.pack(side=TOP, pady=140, fill='x')
+        self.book_frame.pack(side=TOP, pady=(140,0), fill='x')
 
-        # 교재 이미지
-        self.book_image = Label(self.book_frame, borderwidth=2, relief="sunken", text="자료 없음", width=120, height=160)
-        self.book_image.grid(row=1, column=0, rowspan=2)
-
-        # 이미지 크기 조정
-        size_adjusting_image = Image.open("ignore_image\교재선택_image_file.jpg")
-        image = size_adjusting_image.resize(
-            (120,160), Image.ANTIALIAS
-        )
-
-        resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
-
-        self.book_image.config(image=resized_image, text="")
-
-        # 교재 타이틀
-        self.book_title = Message(self.book_frame, font=('배달의민족 주아', 14), text='타이틀테스트', anchor=N, justify=LEFT,width=265, background='skyblue')
-        self.book_title.grid(row=0, column=0, columnspan=3, sticky=W)
-
-        # 교재 정보
-        self.book_info = Message(self.book_frame, font=('배달의민족 주아', 12), justify=LEFT, text='내용 테스트', width=265)
-        self.book_info.grid(row=1, column=1, columnspan=2, sticky=NW, pady=5)
-        #self.open_web_button = Button(
-        #    self.window, font=menu_font, text="교재\n웹사이트\n오픈", padx=1, pady=1
-        #)
-        #self.open_web_button.place(x=250, y=175, width=125, height=125)
-
-        # 성취도
-        self.book_achievement = DoubleVar()
-        self.achievement_bar = tk.Progressbar(
-            self.book_frame, maximum=100, length=240, variable=self.book_achievement
-        )
-        self.achievement_bar.grid(row=2, column=1, sticky=S)
-        self.achievement_bar.config(value=50)
-
-        self.book_achievement_text = Message(self.book_frame, font=('배달의민족 주아', 8), justify=CENTER, text='성취도\n0%', width=40)
-        self.book_achievement_text.grid(row=2, column=2, sticky=S)
-
-        # 기타 인스턴스변수 생성
-        #self.book_index = 0
-        #self.present_book = {}
-        #self.present_book_title = ""
-
-        self.window.resizable(width=False, height=False)
-        self.window.mainloop()
+        with open('information\chosen_book_file.json', 'r', encoding='UTF-8') as every_book_dict:
+            self.fill_book_frame(json.load(every_book_dict))
+            # 각 책마다 다른 인덱스(위젯 row 조정에 이용)
+        
+        
     
     def adjust_start_achievement(self, event):
         if int(self.achievement_start_value.get().replace('%', '')) >= int(self.achievement_end_value.get().replace('%', '')):
@@ -181,6 +142,75 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
     def adjust_end_achievement(self, event):
         if int(self.achievement_start_value.get().replace('%', '')) >= int(self.achievement_end_value.get().replace('%', '')):
             self.achievement_end_value.set(str(int(self.achievement_start_value.get().replace('%', ''))+5)+'%')
+
+    def fill_book_frame(self, book_dict):
+        # 각 책마다 다른 인덱스(위젯 row 조정에 이용)
+        book_index = -1
+        first_book_boolean= False
+        book_image_list = []
+        for book_title in book_dict:
+            book_index += 1
+            # 교재 표지 사진 저장
+            url = book_dict[book_title]["cover"]
+
+            os.system("curl " + url + " > ignore_image\%s.jpg" % str(book_index))
+
+            # 이미지 크기 조정
+            size_adjusting_image = Image.open("ignore_image\%s.jpg" % str(book_index))
+            image = size_adjusting_image.resize(
+                (120,160), Image.ANTIALIAS
+            )
+
+            resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
+            book_image_list.append(resized_image)
+
+            # 교재 이미지
+            Label(self.book_frame, borderwidth=2, relief="sunken", image=book_image_list[book_index], text="", width=120, height=160)\
+                .grid(row= book_index * 3 + 1, column=0, rowspan=2)
+
+
+            # 교재 타이틀
+            if first_book_boolean:
+                pady = (15, 0)
+            else:   # 처음이면
+                pady = (0, 0)
+                first_book_boolean = True
+            Message(self.book_frame, font=('배달의민족 주아', 14), text=book_title, anchor=N, justify=LEFT,width=400, background='skyblue')\
+            .grid(row=book_index * 3 + 0, column=0, columnspan=3, sticky=W, pady=pady)
+
+
+            # 교재 정보 내용
+            book_info_text = '교재 설명: \n%s' % book_dict[book_title]['description']
+            if book_info_text == '':
+                book_info_text = '교재 설명: \n위 교재는 교재 설명을 지원하지 않습니다.'
+
+            # 교재 정보
+            self.book_info = Message(self.book_frame, font=('배달의민족 주아', 12), justify=LEFT, text=book_info_text, width=265)
+            self.book_info.grid(row=book_index * 3 + 1, column=1, columnspan=2, sticky=NW, pady=5)
+            #self.open_web_button = Button(
+            #    self.window, font=menu_font, text="교재\n웹사이트\n오픈", padx=1, pady=1
+            #)
+            #self.open_web_button.place(x=250, y=175, width=125, height=125)
+
+            # 성취도
+            self.book_achievement = DoubleVar()
+            self.achievement_bar = tk.Progressbar(
+                self.book_frame, maximum=100, length=240, variable=self.book_achievement
+            )
+            self.achievement_bar.grid(row=book_index * 3 + 2, column=1, sticky=S)
+            self.achievement_bar.config(value=50)
+
+            self.book_achievement_text = Message(self.book_frame, font=('배달의민족 주아', 8), justify=CENTER, text='성취도\n0%', width=40)
+            self.book_achievement_text.grid(row=book_index * 3 + 2, column=2, sticky=S)
+
+            # 기타 인스턴스변수 생성
+            #self.book_index = 0
+            #self.present_book = {}
+            #self.present_book_title = ""
+        
+
+        self.window.mainloop()
+
 
 
 
