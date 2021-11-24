@@ -13,7 +13,6 @@ from interface.공부계획.알리미_window import show_message
 
 class 일일공부계획_window(공부계획_manage_user_information, 찜한교재_manage_user_information):
     def __init__(self, planning_day):
-        print(planning_day)
         super(일일공부계획_window, self).__init__()
         # 창 설정
         self.window = Tk()
@@ -21,6 +20,8 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.window.geometry("400x800")
         self.canvas=Canvas(self.window, width=400, height=400)  #트킨터에서 도형을 그리기 위한 바탕 설정
         self.canvas.place(x=0, y=0)
+        self.tlrksvy=Message(self.window, font=("배달의민족 주아", 13), text="시간표")
+        self.tlrksvy.place(y=5, x=160, width=80, height=30)
         self.clock=self.canvas.create_oval(40, 40, 360, 360, fill="LightSkyBlue3")    #시계정의
         self.planned_time={}      #여기서 계획표에서 공부 시작시간, 끝내는 시간 보여주는 부채꼴을 만들 것임
         self.plan_list=self.plan_list_for_month[planning_day]
@@ -52,8 +53,8 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.book_title.place(x=0, y=400, height=70, width=160)
 
         #시간 입력
-        self.start_time = Entry(self.window, text="", font=("배달의민족 주아", 10))
-        self.end_time = Entry(self.window, text="", font=("배달의민족 주아", 10))
+        self.start_time = Entry(self.window, text="시작시간 입력 ex: 12:00", font=("배달의민족 주아", 10))
+        self.end_time = Entry(self.window, text="끝나는 시간 입력 ex: 15:00", font=("배달의민족 주아", 10))
         self.start_time.place(x=200, y=570, width=140, height=50)
         self.end_time.place(x=200, y=620, width=140, height=50)
 
@@ -64,7 +65,12 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
 
         self.show_book()
 
+        self.window.mainloop()
+
     def plan_maker(self):
+        if int(self.start_time.get()[0:])>int(self.end_time.get()[0:]) or int(self.start_time.get()[0:])>2400 or int(self.end_time.get()[0:])>2400:
+            show_message("24시 이후의 계획은 다음 날에 하시길 바랍니다")
+            return
         start_time={
             "hour" : self.start_time.get()[0:2], 
             "minute" : self.start_time.get()[2:]
@@ -150,18 +156,14 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
     def show_plan(self):
         angle=[]
         if (len(self.plan_list)==0): 
-            show_message("이 날에는 아무런 계획이 없습니다") 
+            show_message("이 날에는 아무런 계획이 없습니다")
         else: 
             i=0
-            self.canvas.delete("all")
             self.clock=self.canvas.create_oval(40, 40, 360, 360, fill="LightSkyBlue3")    #시계정의
             while(i<=len(self.plan_list)-1):    #시간표를 보여주는 부채꼴 생성
                 angle=self.correct_angle(start_hour=self.plan_list[i]["start_time"]["hour"], start_minute=self.plan_list[i]["start_time"]["minute"], end_hour=self.plan_list[i]["end_time"]["hour"], end_minute=self.plan_list[i]["end_time"]["minute"])
                 for_start=angle[0]
                 for_extent=angle[1]
-                if ((i%2)==0):
-                    self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent, fill="SteelBlue1")
-                else:
-                    self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent, fill="PaleGreen1")
+                self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent, fill="SteelBlue1")
                 
                 i+=1

@@ -64,6 +64,7 @@ class 공부계획_manage_user_information:  # 공부계획한 것들 저장
         # start_time은 시작시간, end_time은 끝나는 시간, day는 실행날짜
         book_dict["start_time"]=start_time
         book_dict["end_time"]=end_time
+        book_dict["achievement"]=0
         self.plan_list_for_month[day].append(book_dict)
         self.save_plan_list_to_file()
 

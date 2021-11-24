@@ -190,7 +190,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         book_info_text = "가격: %s원" % book["priceStandard"]
         self.book_info.config(text=book_info_text)
 
-        # 인덱스 수정
+        # 현재 위치/교재 수를 보여주는 텍스트 편집
         searching_order_text = "%s / %s" % (len(searching_result), self.book_index + 1)
         self.searching_order.config(text=searching_order_text)
 
