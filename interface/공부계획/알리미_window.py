@@ -11,3 +11,6 @@ class show_message(object):
     
         self.message=Label(self.window, text=(str(message)), font=("배달의민족 주아", 14))
         self.message.place(x=0, y=0, relheight=1, relwidth=1)
+        # 루프
+        self.window.mainloop()
+        self.window.resizable(width=False, height=False)

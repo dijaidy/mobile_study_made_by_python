@@ -67,7 +67,10 @@ class 오늘의공부_window(공부계획_manage_user_information):
 
         self.show_book_information()    #책 정보보여줌
 
+    
+        # 루프
         self.window.mainloop()
+        self.window.resizable(width=False, height=False)
 
     def show_book_information(self, index_moving=0):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
         # 찜한 책 모음 가져오기

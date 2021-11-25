@@ -65,7 +65,9 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
 
         self.show_book()
 
+        # 루프
         self.window.mainloop()
+        self.window.resizable(width=False, height=False)
 
     def plan_maker(self):
         if int(self.start_time.get()[0:])>int(self.end_time.get()[0:]) or int(self.start_time.get()[0:])>2400 or int(self.end_time.get()[0:])>2400:

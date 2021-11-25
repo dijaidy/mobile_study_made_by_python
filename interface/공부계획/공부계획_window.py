@@ -84,7 +84,9 @@ class 공부계획_window(공부계획_manage_user_information, 찜한교재_man
         #버튼들 배치
         self.change_month(index=0)
 
+        # 루프
         self.window.mainloop()
+        self.window.resizable(width=False, height=False)
 
 
     def change_month(self, index):
