@@ -225,7 +225,7 @@ class 교재선택_window:
     def show_book_information(self):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
         #체크표시 제거
         if not 교재선택_window.unplaced_check:  #체크표시 돼있으면
-            self.already_chosen_mark.place_forget
+            self.already_chosen_mark.place_forget()
             교재선택_window.unplaced_check = True
             self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
             self.release_chosen_book_button.place_forget()
