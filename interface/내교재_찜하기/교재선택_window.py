@@ -95,7 +95,6 @@ class 교재선택_window:
             self.window, values=self.main_category_keys, state="readonly"
         )
         self.main_category_combobox.place(x=20, y=80, width=160, height=30)
-        print('콤보박스')
         self.main_category_combobox.current(0)
 
         # 서브 카테고리 콤보박스
@@ -494,6 +493,9 @@ class 교재선택_window:
     def represent_check(self, book_title):
         # 선택된 교재 리스트
         찜한교재_dict = 찜한교재.call_chosen_book_from_file()
+
+        if 찜한교재_dict == None:
+            찜한교재_dict = {}
         찜한교재_list = 찜한교재_dict.keys()
 
         if book_title in 찜한교재_list:
@@ -509,6 +511,7 @@ class 교재선택_window:
                 교재선택_window.unplaced_check = True
                 self.choose_my_textbook.place(relx=0, relwidth=1, y=800 - 100, height=50)
                 self.release_chosen_book_button.place_forget()
+
     
     def check_without_condition(self):
 

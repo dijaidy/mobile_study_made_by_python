@@ -3,6 +3,8 @@ import urllib.request
 import sys
 import os
 import time
+import json
+
 
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
@@ -30,16 +32,43 @@ submenu_font = ("배달의민족 주아", 17)
 class start_window:
     def __init__(self):
         # 로그인 창
-        Login_window()
+        login = Login_window()
+
+
 
         # 창 설정
         self.window = Tk()
         self.window.title("MOBILE STUDY")
         self.window.geometry("400x800")
 
+        # 닉네임
+        self.nickname = str(login)
+        if self.nickname == '':
+            self.window.destroy()
+            return
+
         # 타이틀 설정
         self.title = Label(self.window, text="MOBILE\nSTUDY", font=title_font)
-        self.title.place(relx=0, relwidth=1, rely=0, height=150)
+        self.title.place(relx=0, relwidth=1, rely=0, height=170)
+
+        # 닉네임 표시
+        self.nickname_label = Label(self.window, text='%s님 환영합니다' % self.nickname, font=('배달의민족 주아', 15), fg='blue')
+        self.nickname_label.pack(side=TOP, anchor=E, padx=10, pady=5)
+
+        # 파일 불러오기
+        # 찜한 교재 목록
+        with open(r'information\users_information_file.json', 'r', encoding='UTF-8') as in_file:
+            with open(r'information\chosen_book_file.json', 'w', encoding='UTF-8') as out_file:
+                self.users_information = json.load(in_file)
+                if self.users_information == None:
+                    self.users_information = {}
+                file_content = self.users_information[self.nickname]["chosen_book_file"]
+                json.dump(file_content, out_file, ensure_ascii=False)
+
+        # 계획표
+        with open(r'information\plan_list_file.json', 'w', encoding='UTF-8') as out_file:
+            file_content = self.users_information[self.nickname]['plan_list_file']
+            json.dump(file_content, out_file, ensure_ascii=False)
 
         # 메뉴 버튼 설정
         self.menu_내교재찜하기 = Button(
@@ -82,6 +111,17 @@ class start_window:
 
         self.window.resizable(width=False, height=False)
         self.window.mainloop()
+
+        # 파일 저장하기
+        with open(r'information\users_information_file.json', 'w', encoding='UTF-8') as out_file:
+            with open(r'information\chosen_book_file.json', 'r', encoding='UTF-8') as in_file1:
+                with open(r'information\plan_list_file.json', 'r', encoding='UTF-8') as in_file2:
+                    self.users_information[self.nickname]['chosen_book_file'] = json.load(in_file1)
+                    self.users_information[self.nickname]['plan_list_file'] = json.load(in_file2)
+                    json.dump(self.users_information, out_file, ensure_ascii=False)
+
+
+
 
     # sub_menu_띄우는 함수 + sub_menu 해당 윈도우 띄우는 함수
     def show_내교재찜하기_submenu(self):

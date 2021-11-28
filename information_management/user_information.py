@@ -26,8 +26,20 @@ class 찜한교재_manage_user_information:  # 교재등록 밑 관리
             json.dump(self.chosen_book_dict, out_file, ensure_ascii=False)
 
     def call_chosen_book_from_file(self):  # 파일 불러오기
-        with open("information\chosen_book_file.json", "r", encoding="UTF-8") as out_file:
-            return json.load(out_file)
+        with open("information\chosen_book_file.json", "r", encoding="UTF-8") as in_file:
+            temp = in_file.readline()
+            print(temp)
+            if temp != '':
+                if temp != r'{}':
+                    
+                    return json.load(in_file)
+                else:
+                    return {}
+            else:
+                with open("information\chosen_book_file.json", "w", encoding="UTF-8") as out_file:
+                    out_dict = {}
+                    json.dump(out_dict, out_file, ensure_ascii=False)
+                    return {}
             
         
 

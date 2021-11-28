@@ -1,17 +1,22 @@
+
 from tkinter import *
 from tkinter import ttk as tk
 import sys
 import os
 import json
+
 from PIL import Image, ImageTk
 import webbrowser
 import tkinter.ttk
+
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 sys.path.append(
     os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__)))))
 )
+
 from information_management.user_information import 찜한교재_manage_user_information
+
 
 # 폰트 설정
 title_font = ("배달의민족 주아", 23)
@@ -210,7 +215,6 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
                     del(book_dict[book_title])
             
             #############성취도 관련 필터 ###################
-        print(book_dict)
         self.searching_order.config(text = '교재 전체 개수: %s권'%str(len(book_dict)))
         book_index = -1
         first_book_boolean= False
