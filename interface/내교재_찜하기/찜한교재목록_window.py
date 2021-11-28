@@ -45,13 +45,9 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.search_entry = Entry(self.window, font=menu_font)
         self.search_entry.place(relx=0, relwidth=4 / 5, rely=0, height=50)
 
-        # 교재 불러오기
-        with open('information\chosen_book_file.json', 'r', encoding='UTF-8') as every_book_dict:
-            book_dict = json.load(every_book_dict)
-
         # 검색하기 버튼
         self.search_button = Button(
-            self.window, text="검색(필터)", font=('배달의민족 주아', 14), command=lambda: self.fill_book_frame(book_dict=book_dict,first = False)
+            self.window, text="검색(필터)", font=('배달의민족 주아', 14), command=lambda: self.fill_book_frame(first = False)
         )
         self.search_button.place(relx=4 / 5, relwidth=1 / 5, rely=0, height=50)
 
@@ -64,13 +60,22 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
             text="과목",
             width=200,
         )
-        self.subject_sort_text.place(x=0, y=60, width=200, height=20)
+        self.subject_sort_text.place(x=0, y=60, width=133, height=20)
+
+        # 교재종류_텍스트
+        self.book_type_text = Message(self.window,
+            font=("배달의민족 주아", 12),
+            justify=CENTER,
+            anchor=CENTER,
+            text="과목",
+            width=200,)
+        self.book_type_text.place(x=133, y=60, width=133, height=20)
 
         # 성취도분류_텍스트
         self.achievement_sort_text = Message(
             self.window, font=("배달의민족 주아", 12), justify=CENTER, anchor=CENTER, text="성취도"
         )
-        self.achievement_sort_text.place(x=200, y=60, width=200, height=20)
+        self.achievement_sort_text.place(x=266, y=60, width=134, height=20)
 
         # 카테고리 가져오기
         self.subject_list = []  # 전 카테고리 딕셔너리
@@ -82,15 +87,25 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.subject_sort_combobox = tkinter.ttk.Combobox(
             self.window, values=self.subject_list, state="readonly"
         )
-        self.subject_sort_combobox.place(x=20, y=80, width=160, height=30)
+        self.subject_sort_combobox.place(x=15, y=80, width=103, height=30)
         self.subject_sort_combobox.current(0)
+
+        # 교재종류 콤보박스
+        self.book_type_list = ['전체',"예습교재", "시험교재", "기타교재"]
+
+        self.book_type_combobox = tkinter.ttk.Combobox(
+            self.window, values=self.book_type_list, state="readonly"
+        )
+        self.book_type_combobox.place(x=148, y=80, width=103, height=30)
+        self.book_type_combobox.current(0)
+
 
         #성취도 시작 범위 텍스트
         achievement_start_range_text = Label(self.window, font=('배달의민족 주아', 10), justify=CENTER, anchor=CENTER, text='시작 범위')
-        achievement_start_range_text.place(x=200, y=80, width=100, height=20)
+        achievement_start_range_text.place(x=266, y=80, width=67, height=20)
         #성취도 끝 범위 텍스트
         achievement_end_range_text = Label(self.window, font=('배달의민족 주아', 10), justify=CENTER, anchor=CENTER, text='끝 범위')
-        achievement_end_range_text.place(x=300, y=80, width=100, height=20)
+        achievement_end_range_text.place(x=333, y=80, width=67, height=20)
 
         # 성취도분류 조정
         self.achievement_start_value = StringVar(self.window)
@@ -99,9 +114,9 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         achievement_end_value_list = [str(i) + '%' for i in range(0, 101, 5)]
 
         self.achievement_start_spinbox = Spinbox(self.window, values=achievement_start_value_list, textvariable=self.achievement_start_value)
-        self.achievement_start_spinbox.place(x=220, y=100, width=80, height=20)
+        self.achievement_start_spinbox.place(x=266, y=100, width=67, height=20)
         self.achievement_end_spinbox= Spinbox(self.window, values=achievement_end_value_list, textvariable=self.achievement_end_value)
-        self.achievement_end_spinbox.place(x=300, y=100, width=80, height=20)
+        self.achievement_end_spinbox.place(x=333, y=100, width=67, height=20)
         self.achievement_start_value.set('0%')
         self.achievement_end_value.set('100%')
 
@@ -162,8 +177,9 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
     def filter_book(self):
         searching_word = self.search_entry.get()
         subject = self.subject_sort_combobox.get()
+        book_type = self.book_type_combobox.get()
         achievement_range = (int(self.achievement_start_value.get().replace('%', '')), int(self.achievement_end_value.get().replace('%', '')))
-        return searching_word, subject, achievement_range
+        return searching_word, subject, book_type, achievement_range
             
     def adjust_start_achievement(self, event):
         if int(self.achievement_start_value.get().replace('%', '')) >= int(self.achievement_end_value.get().replace('%', '')):
@@ -173,7 +189,10 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         if int(self.achievement_start_value.get().replace('%', '')) >= int(self.achievement_end_value.get().replace('%', '')):
             self.achievement_end_value.set(str(int(self.achievement_start_value.get().replace('%', ''))+5)+'%')
 
-    def fill_book_frame(self, book_dict, first = True):
+    def fill_book_frame(self, first = True):
+        # 교재 불러오기
+        with open('information\chosen_book_file.json', 'r', encoding='UTF-8') as every_book_dict:
+            book_dict = json.load(every_book_dict)
 
         # 캔버스 재생성
 
@@ -187,10 +206,9 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.canvas.create_window((0, 0), window=self.book_frame, anchor='nw')
 
         if not first:   # 검색버튼 눌러서 책 리스트 내용입력할 때
-            print('조건 검사')
 
             # 조건 변수 저장
-            searching_word, subject, achievement_range = self.filter_book()
+            searching_word, subject, book_type, achievement_range = self.filter_book()
             removing_list = []
             # 검색어 필터
             if searching_word == '':
@@ -201,6 +219,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
                         removing_list.append(book_title)
                 for book_title in removing_list:
                     del(book_dict[book_title])
+                removing_list = []
 
             # 과목 필터
             if subject == '전체':
@@ -213,6 +232,20 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
 
                 for book_title in removing_list:
                     del(book_dict[book_title])
+                removing_list = []
+
+            # 책 종류 필터
+            if book_type == '전체':
+                print('전체 책종류')
+            else:
+
+                for book_title in book_dict:
+                    if book_dict[book_title]['book_type'] != book_type:
+                        removing_list.append(book_title)
+
+                for book_title in removing_list:
+                    del(book_dict[book_title])
+                removing_list = []
             
             #############성취도 관련 필터 ###################
         self.searching_order.config(text = '교재 전체 개수: %s권'%str(len(book_dict)))
