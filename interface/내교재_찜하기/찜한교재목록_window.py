@@ -27,7 +27,8 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         # 창 설정
         self.window = Tk()
         self.window.title("찜한교재현황")
-        self.window.geometry("400x800")
+        self.window.geometry("400x790")
+        self.window.resizable(width=False, height=False)
 
         # 현재 위치/책 전체 개수
         self.searching_order = Label(self.window, font=menu_font, text='')
@@ -106,7 +107,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.achievement_end_spinbox.bind('<ButtonRelease-1>', self.adjust_end_achievement)
 
         # 프레임 만들기
-        self.frame_canvas = Frame(self.window, width=400, height=650)
+        self.frame_canvas = Frame(self.window, width=400, height=630)
         #self.frame_canvas.pack(side=TOP, pady=(140,0), fill='x')
         #self.frame_canvas.pack_propagate(False)
         self.frame_canvas.grid(row=0, column=0, pady=(160, 0), sticky='n')
@@ -121,11 +122,13 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
         self.canvas = Canvas(self.frame_canvas, bg='yellow')
         self.canvas.grid(row=0, column=0, sticky='news')
 
+        
                 # 캔버스에 스크롤바 연결
         self.vsb = Scrollbar(self.frame_canvas, orient='vertical', command=self.canvas.yview)
         self.vsb.grid(row=0, column=1, sticky='ns')
+        self.canvas.configure(yscrollcommand=self.vsb.set)
 
-
+        
         
         
 
@@ -134,19 +137,22 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
 
         with open('information\chosen_book_file.json', 'r', encoding='UTF-8') as every_book_dict:
             self.fill_book_frame(json.load(every_book_dict))
+        self.book_frame.update_idletasks()
+        self.canvas.config(scrollregion=self.canvas.bbox('all'))
+            
+
         
-        
-        self.canvas.configure(yscrollcommand=self.vsb.set)
+
 
         # Update buttons frames idle tasks to let tkinter calculate buttons sizes
 
         # Resize the canvas frame to show exactly 5-by-5 buttons and the scrollbar
         first5columns_width = 380
         first5rows_height = 660
-        
+
         # 루프
         self.window.mainloop()
-        self.window.resizable(width=False, height=False)
+
         
     def filter_book(self):
         searching_word = self.search_entry.get()
@@ -168,7 +174,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
             print('조건 검사')
             #프레임 재생성
             
-            self.canvas.delete(self.book_frame)
+            self.book_frame.destroy()
             self.book_frame = Frame(self.canvas) # width=360
             self.canvas.create_window((0, 0), window=self.book_frame, anchor='nw')
             # 조건 변수 저장
@@ -188,6 +194,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
             if subject == '전체':
                 print('전체 과목')
             else:
+
                 for book_title in book_dict:
                     if book_dict[book_title]['subject'] != subject:
                         removing_list.append(book_title)
@@ -197,9 +204,10 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
             
             #############성취도 관련 필터 ###################
         print(book_dict)
+        self.searching_order.config(text = '교재 전체 개수: %s권'%str(len(book_dict)))
         book_index = -1
         first_book_boolean= False
-        book_image_list = []
+        self.book_image_list = []
         for book_title in book_dict:
             book_index += 1
             # 교재 표지 사진 저장
@@ -214,10 +222,10 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
             )
 
             resized_image = ImageTk.PhotoImage(image, master=self.window)  # 새창에서 그림띄우면 마스터 정의 꼭!
-            book_image_list.append(resized_image)
+            self.book_image_list.append(resized_image)
 
             # 교재 이미지
-            Label(self.book_frame, borderwidth=2, relief="sunken", image=book_image_list[book_index], text="", width=120, height=160)\
+            Label(self.book_frame, borderwidth=2, relief="sunken", image=self.book_image_list[book_index], text="", width=120, height=160)\
                 .grid(row= book_index * 3 + 1, column=0, rowspan=2)
 
 
@@ -256,17 +264,19 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
 
             self.book_achievement_text = Message(self.book_frame, font=('배달의민족 주아', 8), justify=CENTER, text='성취도\n0%', width=40)
             self.book_achievement_text.grid(row=book_index * 3 + 2, column=2, sticky=S)
+            self.window.update()
 
             # 기타 인스턴스변수 생성
             #self.book_index = 0
             #self.present_book = {}
             #self.present_book_title = ""
-        
-        self.searching_order.config(text = '교재 전체 개수: %s권'%str(book_index+1))
 
         
+   
 
-        self.window.mainloop()
+
+
+        
 
 
 
