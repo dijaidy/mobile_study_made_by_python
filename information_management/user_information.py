@@ -70,7 +70,7 @@ class 공부계획_manage_user_information:  # 공부계획한 것들 저장
     def __init__(self):
         super(공부계획_manage_user_information, self).__init__()
         self.Korean_time = time.localtime(time.time())
-        self.plan_list_for_month = []
+        self.plan_list_for_month = {}
         self.plan_list_for_month = self.call_plan_list_from_file()  # 전체 계획 저장
         self.plan_list = {}
 
@@ -79,7 +79,10 @@ class 공부계획_manage_user_information:  # 공부계획한 것들 저장
         book_dict["start_time"]=start_time
         book_dict["end_time"]=end_time
         book_dict["achievement"]=0
-        self.plan_list_for_month[day].append(book_dict)
+        if len(self.plan_list_for_month[day])==0:
+            self.plan_list_for_month[day]=[book_dict]
+        else:
+            self.plan_list_for_month[day].append(book_dict)
         self.save_plan_list_to_file()
 
     def delete_plan_list(self, book_dict, day):

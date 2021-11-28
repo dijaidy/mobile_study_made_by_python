@@ -90,12 +90,12 @@ class start_window:
         self.menu_공부방.place(y=150, height=50, relx=2 / 5, relwidth=1 / 5)
 
         self.menu_커뮤니티 = Button(
-            self.window, text="커뮤니티", font=menu_font, command=self.show_커뮤니티_submenu
+            self.window, text="커뮤니티", font=menu_font, bg="red", command=self.show_커뮤니티_submenu
         )
         self.menu_커뮤니티.place(y=150, height=50, relx=3 / 5, relwidth=1 / 5)
 
         self.menu_현재성과 = Button(
-            self.window, text="나의 성과", font=menu_font, command=self.show_현재성과_submenu
+            self.window, text="나의 성과", font=menu_font, bg="red", command=self.show_현재성과_submenu
         )
         self.menu_현재성과.place(y=150, height=50, relx=4 / 5, relwidth=1 / 5)
 
@@ -129,6 +129,8 @@ class start_window:
         self.sub_menu_2["text"] = "찜한교재목록 >"
         self.sub_menu_1["command"] = self.show_교재선택_window
         self.sub_menu_2["command"] = self.show_찜한교재목록_window
+        self.sub_menu_1["bg"] = "Grey93"
+        self.sub_menu_2["bg"] = "Grey93"
 
     def show_교재선택_window(self):
         교재선택_window()
@@ -141,6 +143,8 @@ class start_window:
         self.sub_menu_2["text"] = ""
         self.sub_menu_1["command"] = self.show_공부계획_window
         self.sub_menu_2["command"] = ""
+        self.sub_menu_1["bg"] = "Grey93"
+        self.sub_menu_2["bg"] = "Grey93"
 
     def show_공부계획_window(self):
         공부계획_window()
@@ -150,6 +154,8 @@ class start_window:
         self.sub_menu_2["text"] = "학교 수업 복습 >"
         self.sub_menu_1["command"] = self.show_오늘의공부_window
         self.sub_menu_2["command"] = self.show_학교수업복습_window
+        self.sub_menu_1["bg"] = "Grey93"
+        self.sub_menu_2["bg"] = "red"
 
     def show_오늘의공부_window(self):
         오늘의공부_window()
@@ -162,6 +168,8 @@ class start_window:
         self.sub_menu_2["text"] = "유저 정보 >"
         self.sub_menu_1["command"] = self.show_스터디그룹_window
         self.sub_menu_2["command"] = self.show_학교정보_window
+        self.sub_menu_1["bg"] = "red"
+        self.sub_menu_2["bg"] = "red"
 
     def show_스터디그룹_window(self):
         스터디그룹_window()
@@ -174,6 +182,8 @@ class start_window:
         self.sub_menu_2["text"] = "랭킹 >"
         self.sub_menu_1["command"] = self.show_학습통계_window
         self.sub_menu_2["command"] = self.show_랭킹_window
+        self.sub_menu_1["bg"] = "red"
+        self.sub_menu_2["bg"] = "red"
 
     def show_학습통계_window(self):
         학습통계_window()

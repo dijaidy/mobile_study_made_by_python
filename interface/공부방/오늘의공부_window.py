@@ -1,7 +1,6 @@
 from tkinter import *
 import sys
 import os
-from multiprocessing import Process, process
 import time
 
 sys.path.append(
@@ -25,7 +24,6 @@ class 오늘의공부_window(공부계획_manage_user_information):
         self.window = Tk()
         self.window.title("오늘의공부")
         self.window.geometry("400x800")
-        self.window.resizable(False, False)
 
         #자료 생성
         self.studied_time={"hour" : 0, "minute": 0, "second" : 0} #총 공부시간
@@ -70,19 +68,21 @@ class 오늘의공부_window(공부계획_manage_user_information):
     
         # 루프
         self.window.mainloop()
-        self.window.resizable(width=False, height=False)
 
     def show_book_information(self, index_moving=0):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
         # 찜한 책 모음 가져오기
-        searching_result = self.plan_list_for_month[self.return_present_time().tm_yday]
+        searching_result = self.plan_list_for_month[str(self.return_present_time().tm_yday)]
 
         # 인덱스 조정
-        if self.book_index == 0 and index_moving == (-1):
-            self.book_index = len(searching_result) - 1
-        elif self.book_index < len(searching_result) - 1:
+        if (self.book_index == 0) and (index_moving == -1):
+            self.book_index = len(self.chosen_book_dict)-1
+        elif self.book_index < len(self.chosen_book_dict)-1:
             self.book_index += index_moving
-        elif self.book_index >= len(searching_result) - 1:
-            self.book_index = 0
+        elif self.book_index == len(self.chosen_book_dict)-1:
+            if index_moving == 1:
+                self.book_index = 0
+            else:
+                self.book_index += index_moving
         # 책제목 리스트
         title_list = []
         for i in range(0, len(searching_result)):
@@ -189,14 +189,8 @@ class 오늘의공부_공부중_window():
         #완전정지버튼
         self.dhkswjswjdwl=Button(self.window, font=("배달의민족 주아", 15), text="공부완료", command= lambda: x==self.ryworhdqntlrks)    #x=self.ryworhdqntlrks과 같은 기능임. 수정하지 말 것
         self.dhkswjswjdwl.place(y=700, x=290, height=100, width=110)
-        p1=Process(target=self.count_time(book_dictionary))
-        p2=Process(target=lambda:self.window.mainloop())
-
-        p1.start()
-        p2.start()
-        p1.join()
-        p2.join()
-
+        
+        self.window.mainloop()
 
     def count_time(self, book_dictionary):
         if x!={"hour":0, "minute":0, "second":0}:
@@ -208,6 +202,7 @@ class 오늘의공부_공부중_window():
             self.plus_second(self.chdrhdqntlrks)
             self.show_chdrhdqntlrks.config(text="총 공부시간\n"+str(self.chdrhdqntlrks["hour"])+":"+str(self.chdrhdqntlrks["minute"])+":"+str(self.chdrhdqntlrks["second"]))
             time.sleep(1)
+
     def end_code(self):
         x==self.ryworhdqntlrks
         self.window.destroy()    
