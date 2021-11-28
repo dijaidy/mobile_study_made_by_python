@@ -14,6 +14,9 @@ class 찜한교재_manage_user_information:  # 교재등록 밑 관리
         book_dict["subject"] = subject  # 교재의 과목
         book_dict["book_type"] = book_type  # 교재의 종류(ex:예습교재, 시험교재)
         self.chosen_book_dict[book_title] = book_dict
+        print('book_title: ',book_title)
+        print('book_dict:', book_dict)
+        print('self.chosen_book_dict', self.chosen_book_dict)
 
     def delete_chosen_book_dict(self, book_title):
         if book_title in self.chosen_book_dict:
@@ -26,13 +29,12 @@ class 찜한교재_manage_user_information:  # 교재등록 밑 관리
             json.dump(self.chosen_book_dict, out_file, ensure_ascii=False)
 
     def call_chosen_book_from_file(self):  # 파일 불러오기
-        with open("information\chosen_book_file.json", "r", encoding="UTF-8") as in_file:
-            temp = in_file.readline()
-            print(temp)
+        with open("information\chosen_book_file.json", "r", encoding="UTF-8") as in_file1:            
+            temp = in_file1.readline()
             if temp != '':
                 if temp != r'{}':
-                    
-                    return json.load(in_file)
+                    with open("information\chosen_book_file.json", "r", encoding="UTF-8") as in_file2:
+                        return json.load(in_file2)
                 else:
                     return {}
             else:
