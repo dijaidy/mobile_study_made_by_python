@@ -18,18 +18,20 @@ from 커뮤니티.유저정보_window import 학교정보_window
 from 나의성과.학습통계_window import 학습통계_window
 from 나의성과.랭킹_window import 랭킹_window
 
+from login_window import Login_window
+
+
 # 폰트 설정
 title_font = ("배달의민족 주아", 30)
 menu_font = ("배달의민족 주아", 15)
 submenu_font = ("배달의민족 주아", 17)
 
-api_loading_source = API_loading()
-
-교재선택창 = 0
-
 
 class start_window:
     def __init__(self):
+        # 로그인 창
+        Login_window()
+
         # 창 설정
         self.window = Tk()
         self.window.title("MOBILE STUDY")

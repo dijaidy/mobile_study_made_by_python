@@ -119,7 +119,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
 
 
         # 그 프레임안에 캔버스 그리기
-        self.canvas = Canvas(self.frame_canvas, bg='yellow')
+        self.canvas = Canvas(self.frame_canvas, bg='white')
         self.canvas.grid(row=0, column=0, sticky='news')
 
         
@@ -169,14 +169,21 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
             self.achievement_end_value.set(str(int(self.achievement_start_value.get().replace('%', ''))+5)+'%')
 
     def fill_book_frame(self, book_dict, first = True):
-        # 각 책마다 다른 인덱스(위젯 row 조정에 이용)
+
+        # 캔버스 재생성
+
+        self.canvas.destroy()
+        self.canvas = Canvas(self.frame_canvas, bg='white')
+        self.canvas.grid(row=0, column=0, sticky='news')
+
+        #프레임 재생성
+        self.book_frame.destroy()
+        self.book_frame = Frame(self.canvas) # width=360
+        self.canvas.create_window((0, 0), window=self.book_frame, anchor='nw')
+
         if not first:   # 검색버튼 눌러서 책 리스트 내용입력할 때
             print('조건 검사')
-            #프레임 재생성
-            
-            self.book_frame.destroy()
-            self.book_frame = Frame(self.canvas) # width=360
-            self.canvas.create_window((0, 0), window=self.book_frame, anchor='nw')
+
             # 조건 변수 저장
             searching_word, subject, achievement_range = self.filter_book()
             removing_list = []
@@ -265,19 +272,14 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
             self.book_achievement_text = Message(self.book_frame, font=('배달의민족 주아', 8), justify=CENTER, text='성취도\n0%', width=40)
             self.book_achievement_text.grid(row=book_index * 3 + 2, column=2, sticky=S)
             self.window.update()
+            self.book_frame.update_idletasks()
+            self.canvas.configure(yscrollcommand=self.vsb.set)
+            self.vsb.configure(command=self.canvas.yview)
+            self.canvas.config(scrollregion=self.canvas.bbox('all'))
+            self.window.update()
 
             # 기타 인스턴스변수 생성
             #self.book_index = 0
             #self.present_book = {}
             #self.present_book_title = ""
-
-        
-   
-
-
-
-        
-
-
-
 
