@@ -18,13 +18,15 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.window = Tk()
         self.window.title("일일공부계획")
         self.window.geometry("400x800")
-
         self.canvas=Canvas(self.window, width=400, height=400)  #트킨터에서 도형을 그리기 위한 바탕 설정
         self.canvas.place(x=0, y=0)
         self.tlrksvy=Message(self.window, font=("배달의민족 주아", 13), text="시간표")
         self.tlrksvy.place(y=5, x=160, width=80, height=30)
         self.clock=self.canvas.create_oval(40, 40, 360, 360, fill="LightSkyBlue3")    #시계정의
         self.planned_time={}      #여기서 계획표에서 공부 시작시간, 끝내는 시간 보여주는 부채꼴을 만들 것임
+        self.plan_list=self.plan_list_for_month[planning_day]
+        self.planning_day=planning_day
+        self.show_plan()
 
         # 책 전체개수/현재 위치
         self.searching_order = Label(self.window, font=("배달의민족 주아", 10), text="  /  ")
@@ -61,17 +63,11 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.present_book = {}
         self.present_book_title = ""
 
-        try:
-            self.plan_list=self.plan_list_for_month[str(planning_day)]
-        except KeyError:
-            self.plan_list={}
-        self.planning_day=str(planning_day)
-        self.show_plan()
         self.show_book()
 
         # 루프
         self.window.mainloop()
-        
+        self.window.resizable(width=False, height=False)
 
     def plan_maker(self):
         if int(self.start_time.get()[0:])>int(self.end_time.get()[0:]) or int(self.start_time.get()[0:])>2400 or int(self.end_time.get()[0:])>2400:
@@ -86,17 +82,15 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
             "minute" : self.end_time.get()[2:]
         }
         self.plus_plan_list(book_dict={self.present_book_title : self.chosen_book_dict[self.present_book_title]}, start_time=start_time, end_time=end_time, day=self.planning_day)
-        
+        show_message("교재가 저장되었습니다\n중복저장될 수 있으므로 유의하시길 바랍니다")
         self.plan_list=self.plan_list_for_month[self.planning_day]
         self.show_plan()
-        show_message("교재가 저장되었습니다\n중복저장될 수 있으므로 유의하시길 바랍니다")
 
     def plan_destroyer(self, book_dict):
         self.delete_plan_list(book_dict=book_dict, day=self.planning_day)
-        
+        show_message("계획이 삭제되었습니다")
         self.plan_list=self.plan_list_for_month[self.planning_day]
         self.show_plan()
-        show_message("계획이 삭제되었습니다")
 
     def show_book(self, index_moving = 0):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
         # 인덱스 조정
@@ -104,11 +98,8 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
             self.book_index = len(self.chosen_book_dict)-1
         elif self.book_index < len(self.chosen_book_dict)-1:
             self.book_index += index_moving
-        elif self.book_index == len(self.chosen_book_dict)-1:
-            if index_moving == 1:
-                self.book_index = 0
-            else:
-                self.book_index += index_moving
+        elif self.book_index >= len(self.chosen_book_dict)-1:
+            self.book_index = 0
         # 책제목 리스트
         title_list = list(self.chosen_book_dict.keys())
 
