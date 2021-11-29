@@ -155,7 +155,7 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
             self.start_time.insert(0, self.plan_list[i]["start_time"]["hour"]+self.plan_list[i]["start_time"]["minute"])
             self.end_time.insert(0, self.plan_list[i]["end_time"]["hour"]+self.plan_list[i]["end_time"]["minute"])
 
-        self.window.update()  
+        self.window.mainloop()  
 
     def show_plan(self):
         angle=[]
