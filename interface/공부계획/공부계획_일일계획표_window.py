@@ -30,7 +30,6 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.plan_list=self.plan_list_for_month[planning_day]
         self.planning_day=planning_day
         self.show_plan()
-        print('efeifjeif')
 
         # 책 전체개수/현재 위치
         self.searching_order = Label(self.window, font=("배달의민족 주아", 10), text="  /  ")
@@ -71,7 +70,6 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
 
         # 루프
         self.window.mainloop()
-        self.window.resizable(width=False, height=False)
 
     def plan_maker(self):
         if int(self.start_time.get()[0:])>int(self.end_time.get()[0:]) or int(self.start_time.get()[0:])>2400 or int(self.end_time.get()[0:])>2400:

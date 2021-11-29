@@ -14,9 +14,6 @@ class 찜한교재_manage_user_information:  # 교재등록 밑 관리
         book_dict["subject"] = subject  # 교재의 과목
         book_dict["book_type"] = book_type  # 교재의 종류(ex:예습교재, 시험교재)
         self.chosen_book_dict[book_title] = book_dict
-        print('book_title: ',book_title)
-        print('book_dict:', book_dict)
-        print('self.chosen_book_dict', self.chosen_book_dict)
 
     def delete_chosen_book_dict(self, book_title):
         if book_title in self.chosen_book_dict:

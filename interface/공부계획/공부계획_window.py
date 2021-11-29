@@ -17,6 +17,7 @@ class 공부계획_window(공부계획_manage_user_information, 찜한교재_man
         self.window = Tk()
         self.window.title("공부계획")
         self.window.geometry("400x800")
+        self.window.resizable(width=False, height=False)
 
         self.present_month=self.return_present_time().tm_mon
 

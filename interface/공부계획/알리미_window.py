@@ -1,5 +1,4 @@
 from tkinter import *
-import time
 
 class show_message(object):
     def __init__(self, message):
@@ -10,6 +9,5 @@ class show_message(object):
         self.window.geometry("400x150")
     
         self.message=Label(self.window, text=(str(message)), font=("배달의민족 주아", 14))
-        self.message.place(x=0, y=0, relheight=1, relwidth=1)
+        self.message.pack()
         # 루프
-        self.window.mainloop()
