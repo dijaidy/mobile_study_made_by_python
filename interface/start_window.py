@@ -156,7 +156,7 @@ class start_window:
         self.sub_menu_1["command"] = self.show_오늘의공부_window
         self.sub_menu_2["command"] = self.show_학교수업복습_window
         self.sub_menu_1["bg"] = "Grey93"
-        self.sub_menu_2["bg"] = "red"
+        self.sub_menu_2["bg"] = "Grey93"
 
     def show_오늘의공부_window(self):
         오늘의공부_window()

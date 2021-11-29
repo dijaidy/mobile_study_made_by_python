@@ -20,13 +20,22 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.window.title("일일공부계획")
         self.window.geometry("400x800")
         self.window.resizable(width=False, height=False)
+
+        # 기타 인스턴스변수 생성
+        self.book_index = 0
+        self.present_book = {}
+        self.present_book_title = ""
         
         self.canvas=Canvas(self.window, width=400, height=400)  #트킨터에서 도형을 그리기 위한 바탕 설정
         self.canvas.place(x=0, y=0)
-        self.tlrksvy=Message(self.window, font=("배달의민족 주아", 13), text="시간표")
-        self.tlrksvy.place(y=5, x=160, width=80, height=30)
+        self.tlrksvy=Message(self.window, font=("배달의민족 주아", 17), text="시간표")
+        self.tlrksvy.place(y=5, x=120, width=160, height=30)
         self.clock=self.canvas.create_oval(40, 40, 360, 360, fill="LightSkyBlue3")    #시계정의
+
         self.planned_time={}      #여기서 계획표에서 공부 시작시간, 끝내는 시간 보여주는 부채꼴을 만들 것임
+        self.meaning_of_color_of_arc=Label(self.window, font=("배달의민족 주아", 11), text="탁한 파랑: 비어있는 시간\n밝은 파랑: 계획이 있는 시간\n핑크: 지금 보여주는 교재를 공부하는 시간대")
+        self.meaning_of_color_of_arc.place(x=25, y=680, width=350, height=80)
+
         self.plan_list=self.plan_list_for_month[planning_day]
         self.planning_day=planning_day
         self.window.update()
@@ -57,15 +66,14 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.book_title.place(x=0, y=400, height=70, width=160)
 
         #시간 입력
+        self.start_text = Message(self.window, text="시작시간", font=("배달의민족 주아", 10))
+        self.end_text = Message(self.window, text="끝시간", font=("배달의민족 주아", 10))
         self.start_time = Entry(self.window, text="시작시간 입력 ex: 12:00", font=("배달의민족 주아", 10))
         self.end_time = Entry(self.window, text="끝나는 시간 입력 ex: 15:00", font=("배달의민족 주아", 10))
-        self.start_time.place(x=200, y=570, width=140, height=50)
+        self.start_text.place(x=200, y=500, width=140, height=30)
+        self.end_text.place(x=200, y=590, width=140, height=30)
+        self.start_time.place(x=200, y=530, width=140, height=50)
         self.end_time.place(x=200, y=620, width=140, height=50)
-
-        # 기타 인스턴스변수 생성
-        self.book_index = 0
-        self.present_book = {}
-        self.present_book_title = ""
 
         self.show_book()
 
@@ -73,21 +81,22 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.window.mainloop()
 
     def plan_maker(self):
-        if int(self.start_time.get()[0:])>int(self.end_time.get()[0:]) or int(self.start_time.get()[0:])>2400 or int(self.end_time.get()[0:])>2400:
+        if int(self.start_time.get().split(":")[0]+self.start_time.get().split(":")[1])>int(self.end_time.get().split(":")[0]+self.end_time.get().split(":")[1]) or int(self.start_time.get().split(":")[0]+self.start_time.get().split(":")[1])>2400 or int(self.end_time.get().split(":")[0]+self.end_time.get().split(":")[1])>2400:
             show_message("24시 이후의 계획은 다음 날에 하시길 바랍니다")
             return
         start_time={
-            "hour" : self.start_time.get()[0:2], 
-            "minute" : self.start_time.get()[2:]
+            "hour" : self.start_time.get().split(":")[0],
+            "minute" : self.start_time.get().split(":")[1]
         }
         end_time={
-            "hour" : self.end_time.get()[0:2], 
-            "minute" : self.end_time.get()[2:]
+            "hour" : self.end_time.get().split(":")[0], 
+            "minute" : self.end_time.get().split(":")[1]
         }
         self.plus_plan_list(book_dict={self.present_book_title : self.chosen_book_dict[self.present_book_title]}, start_time=start_time, end_time=end_time, day=self.planning_day)
         show_message("교재가 저장되었습니다\n중복저장될 수 있으므로 유의하시길 바랍니다")
         self.plan_list=self.plan_list_for_month[self.planning_day]
         self.show_plan()
+        
 
     def plan_destroyer(self, book_dict):
         self.delete_plan_list(book_dict=book_dict, day=self.planning_day)
@@ -102,7 +111,10 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         elif self.book_index < len(self.chosen_book_dict)-1:
             self.book_index += index_moving
         elif self.book_index >= len(self.chosen_book_dict)-1:
-            self.book_index = 0
+            if index_moving == 1:
+                self.book_index=0
+            else:
+                self.book_index += index_moving
         # 책제목 리스트
         title_list = list(self.chosen_book_dict.keys())
 
@@ -149,26 +161,29 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
             self.plan_maker_button = Button(self.window, text="저장", font= ("배달의민족 주아", 10), command = lambda: self.plan_maker())
             self.plan_maker_button.place(relx=1/3, y=770, height = 30, relwidth= 1/3)
         else:
-            del(self.planned_time[i])
             self.plan_maker_button = Button(self.window, text="삭제", font= ("배달의민족 주아", 10), command= lambda: self.plan_destroyer(i))
             self.plan_maker_button.place(relx=1/3, y=770, height = 30, relwidth= 1/3)
-            #계획 중에 있는 책이면 계획한 시간대가 어딘지 보여줌
-            self.start_time.insert(0, self.plan_list[i]["start_time"]["hour"]+self.plan_list[i]["start_time"]["minute"])
-            self.end_time.insert(0, self.plan_list[i]["end_time"]["hour"]+self.plan_list[i]["end_time"]["minute"])
+            #계획한 시간대가 어딘지 보여줌
+            self.start_time.insert(0, self.plan_list[i]["start_time"]["hour"]+":"+self.plan_list[i]["start_time"]["minute"])
+            self.end_time.insert(0, self.plan_list[i]["end_time"]["hour"]+":"+self.plan_list[i]["end_time"]["minute"])
+            self.show_plan()
 
         self.window.mainloop()  
 
     def show_plan(self):
         angle=[]
         if (len(self.plan_list)==0): 
-            show_message("이 날에는 아무런 계획이 없습니다")
+            show_message("이 날에는 아무런 계획이 없습니다\n시작시간과 끝시간을 입력할 때\nnn:nn형식으로 입력해주시길 바랍니다")
         else: 
+            self.canvas.delete("all")
             i=0
             self.clock=self.canvas.create_oval(40, 40, 360, 360, fill="LightSkyBlue3")    #시계정의
             while(i<=len(self.plan_list)-1):    #시간표를 보여주는 부채꼴 생성
                 angle=self.correct_angle(start_hour=self.plan_list[i]["start_time"]["hour"], start_minute=self.plan_list[i]["start_time"]["minute"], end_hour=self.plan_list[i]["end_time"]["hour"], end_minute=self.plan_list[i]["end_time"]["minute"])
                 for_start=angle[0]
                 for_extent=angle[1]
-                self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent, fill="SteelBlue1")
-                
+                if i!=self.book_index:
+                    self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent, fill="SteelBlue1")
+                else:
+                    self.planned_time[i]=self.canvas.create_arc(40, 40, 360, 360, start=for_start, extent=for_extent, fill="MistyRose1")
                 i+=1

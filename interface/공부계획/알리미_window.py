@@ -11,3 +11,4 @@ class show_message(object):
         self.message=Label(self.window, text=(str(message)), font=("배달의민족 주아", 14))
         self.message.pack()
         # 루프
+        self.window.update()

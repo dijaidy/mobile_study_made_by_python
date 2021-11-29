@@ -1,7 +1,7 @@
 from tkinter import *
 import sys
 import os
-import time
+import threading
 
 sys.path.append(
     os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__)))))
@@ -46,7 +46,7 @@ class 오늘의공부_window(공부계획_manage_user_information):
 
         #총 공부한 시간 보여주기
         self.show_studied_time=Label(self.window, text="총 공부시간: "+str(self.studied_time["hour"])+":"+str(self.studied_time["minute"])+":"+str(self.studied_time["second"]), font=("배달의민족 주아", 15))
-        self.show_studied_time.place(x=0, y=0, width=1, relheight=1/8)
+        self.show_studied_time.place(x=0, y=400, width=400, height=100)
 
         #이전 교재 보여주기 버튼
         self.prior_button = Button(self.window, text = "이전 교재로 가기", font = ("배달의민족 주아", 10), command = lambda: self.show_book_information(index_moving = -1))
@@ -71,14 +71,14 @@ class 오늘의공부_window(공부계획_manage_user_information):
 
     def show_book_information(self, index_moving=0):  # 알라딘api에서 가져온 책 정보를 이용해 띄워줌
         # 찜한 책 모음 가져오기
-        searching_result = self.plan_list_for_month[str(self.return_present_time().tm_yday)]
+        searching_result = self.plan_list_for_month[self.return_present_time().tm_yday]
 
         # 인덱스 조정
         if (self.book_index == 0) and (index_moving == -1):
-            self.book_index = len(self.chosen_book_dict)-1
-        elif self.book_index < len(self.chosen_book_dict)-1:
+            self.book_index = len(searching_result)-1
+        elif self.book_index < len(searching_result)-1:
             self.book_index += index_moving
-        elif self.book_index == len(self.chosen_book_dict)-1:
+        elif self.book_index == len(searching_result)-1:
             if index_moving == 1:
                 self.book_index = 0
             else:
@@ -125,10 +125,10 @@ class 오늘의공부_window(공부계획_manage_user_information):
     def start_study(self, time_left):
         if time_left=="yet":
             오늘의공부_공부중_window(studied_time=self.studied_time, book_dictionary=self.present_book)
-            self.studied_time["hour"]+=x["hour"]
-            self.studied_time["minute"]+=x["minute"]
-            self.studied_time["second"]+=x["second"]
-            self.present_book["achievement"]=x["hour"]*60+x["minute"]
+            self.studied_time["hour"]=self.present_book["studied_time"]["hour"]
+            self.studied_time["minute"]=self.present_book["studied_time"]["minute"]
+            self.studied_time["second"]=self.present_book["studied_time"]["second"]
+            self.present_book["achievement"]=self.present_book["studied_time"]["hour"]*60+self.present_book["studied_time"]["minute"]
         else:
             show_message("이미 늦었거나 완료한 계획입니다")
             return
@@ -143,17 +143,14 @@ class 오늘의공부_window(공부계획_manage_user_information):
         self.time_label.config(text=self.present_book["start_time"]["hour"]+":"+self.present_book["start_time"]["minute"]+"\n~\n"+self.present_book["end_time"]["hour"]+":"+self.present_book["end_time"]["minute"], bg=self.late_time[time_left]["color"])
 
 
-class 오늘의공부_공부중_window():
+class 오늘의공부_공부중_window(공부계획_manage_user_information):
     def __init__(self, studied_time, book_dictionary):
-
+        super(오늘의공부_공부중_window, self).__init__()
         # 창 설정
         self.window = Tk()
         self.window.title("오늘의공부_공부중")
         self.window.geometry("400x800")
         self.window.config(bg='black')
-
-        #전역변수 초기화
-        x={"hour":0, "minute":0, "second":0}
 
         #자료 정의
         self.chdrhdqntlrks=studied_time
@@ -187,8 +184,10 @@ class 오늘의공부_공부중_window():
         self.vywl.place(x=50, y=250, width=300, height=450)
 
         #완전정지버튼
-        self.dhkswjswjdwl=Button(self.window, font=("배달의민족 주아", 15), text="공부완료", command= lambda: x==self.ryworhdqntlrks)    #x=self.ryworhdqntlrks과 같은 기능임. 수정하지 말 것
+        self.dhkswjswjdwl=Button(self.window, font=("배달의민족 주아", 15), text="공부완료", command= lambda: self.end_code)    #x=self.ryworhdqntlrks과 같은 기능임. 수정하지 말 것
         self.dhkswjswjdwl.place(y=700, x=290, height=100, width=110)
+
+        self.count_time(book_dictionary=book_dictionary)
         
         self.window.mainloop()
 
@@ -196,15 +195,16 @@ class 오늘의공부_공부중_window():
         if x!={"hour":0, "minute":0, "second":0}:
             return
         while (int(공부계획_manage_user_information.return_present_time(self).tm_hour)*60+int(공부계획_manage_user_information.return_present_time(self).tm_min)<int(book_dictionary["end_time"]["hour"]*60)+int(book_dictionary["end_time"]["minute"])):
-            self.show_ryworhdqntlrks.config(text="교재 공부시간\n"+str(self.ryworhdqntlrks["hour"])+":"+str(self.ryworhdqntlrks["minute"])+":"+str(self.ryworhdqntlrks["second"]))
-            self.plus_second(self.wlqwndtlrks)
             self.show_wlqwndtlrks.config(text="집중시간\n"+str(self.ryworhdqntlrks["hour"])+":"+str(self.ryworhdqntlrks["minute"])+":"+str(self.ryworhdqntlrks["second"]))
-            self.plus_second(self.chdrhdqntlrks)
+            self.plus_second(self.wlqwndtlrks)
             self.show_chdrhdqntlrks.config(text="총 공부시간\n"+str(self.chdrhdqntlrks["hour"])+":"+str(self.chdrhdqntlrks["minute"])+":"+str(self.chdrhdqntlrks["second"]))
-            time.sleep(1)
+            self.plus_second(self.chdrhdqntlrks)
+            self.show_ryworhdqntlrks.config(text="교재 공부시간\n"+str(self.ryworhdqntlrks["hour"])+":"+str(self.ryworhdqntlrks["minute"])+":"+str(self.ryworhdqntlrks["second"]))
+            self.plus_second(self.ryworhdqntlrks)
+            
+            self.window.after(1000, self.window.update())
 
     def end_code(self):
-        x==self.ryworhdqntlrks
         self.window.destroy()    
 
     def plus_second(self, objective):
