@@ -29,6 +29,7 @@ class 일일공부계획_window(공부계획_manage_user_information, 찜한교�
         self.planned_time={}      #여기서 계획표에서 공부 시작시간, 끝내는 시간 보여주는 부채꼴을 만들 것임
         self.plan_list=self.plan_list_for_month[planning_day]
         self.planning_day=planning_day
+        self.window.update()
         self.show_plan()
 
         # 책 전체개수/현재 위치
