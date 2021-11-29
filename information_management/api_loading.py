@@ -8,30 +8,37 @@ from datetime import datetime, timedelta
 class API_loading:
     def __init__(self):
         self.subject_id_dict = {
-            "중학 1학년 공통 과학 1": "CLSS0000068529",
-            "중학 1학년 공통 국어": "CLSS0000068510",
-            "중학 1학년 공통 기술·가정 1": "CLSS0000068694",
-            "중학 1학년 공통 도덕 1": "CLSS0000068623",
-            "중학 1학년 공통 미술 1": "CLSS0000068739",
-            "중학 1학년 공통 사회 1": "CLSS0000068583",
-            "중학 1학년 공통 수학 1": "CLSS0000068558",
-            "중학 1학년 공통 영어 1": "CLSS0000068757",
-            "중학 1학년 공통 음악 1": "CLSS0000068725",
-            "중학 1학년 공통 체육 1/2": "CLSS0000068637",
-            "중학 2학년 공통 과학": "CLSS0000077433",
-            "중학 2학년 공통 국어": "CLSS0000079323",
-            "중학 2학년 공통 기술가정 2": "CLSS0000079523",
-            "중학 2학년 공통 미술 2": "CLSS0000079996",
-            "중학 2학년 공통 사회": "CLSS0000077950",
-            "중학 2학년 공통 수학": "CLSS0000077664",
-            "중학 2학년 공통 역사 1": "CLSS0000058812",
-            "중학 2학년 공통 영어": "CLSS0000081204",
-            "중학 3학년 공통 과학 3": "CLSS0000059357",
-            "중학 3학년 공통 국어 5": "CLSS0000058989",
-            "중학 3학년 공통 국어 6": "CLSS0000059091",
-            "중학 3학년 공통 수학 3": "CLSS0000059184",
-            "중학 3학년 공통 역사 2": "CLSS0000059293",
-            "중학 3학년 공통 영어 3": "CLSS0000059439",
+            '1' :   {
+                "과학": "CLSS0000068529",
+                "국어": "CLSS0000068510",
+                "기술·가정": "CLSS0000068694",
+                "도덕": "CLSS0000068623",
+                "미술": "CLSS0000068739",
+                "사회": "CLSS0000068583",
+                "수학": "CLSS0000068558",
+                "영어": "CLSS0000068757",
+                "음악": "CLSS0000068725",
+                "체육": "CLSS0000068637"
+            },
+            '2' :   {
+                "과학": "CLSS0000077433",
+                "국어": "CLSS0000079323",
+                "기술가정 ": "CLSS0000079523",
+                "미술 ": "CLSS0000079996",
+                "사회": "CLSS0000077950",
+                "수학": "CLSS0000077664",
+                "역사": "CLSS0000058812",
+                "영어": "CLSS0000081204"
+            },
+            '3' :   {
+                "과학": "CLSS0000059357",
+                "국어": "CLSS0000058989",
+                "국어 6": "CLSS0000059091",
+                "수학": "CLSS0000059184",
+                "역사": "CLSS0000059293",
+                "영어": "CLSS0000059439"
+            }
+            
         }
 
     def return_subject_id(self):
@@ -69,10 +76,9 @@ class API_loading:
     def choose():
         pass
 
-    def load_edunet_information(self):  # subject_id를 이용해 각 과목별 학습 컨텐츠 리턴
+    def load_edunet_information(self, subject_id):  # subject_id를 이용해 각 과목별 학습 컨텐츠 리턴
         need_list = {"kywrd", "url", "thum_img_full_path"}
-        input_word = input("과목을 입력해주세요: ")
-        subject_ID = self.subject_id_dict[input_word]
+        subject_ID = subject_id
 
         url_edunet = (
             "http://down.edunet4u.net/KEDNCM/OPENAPI/SUBCONT/nedu_sub_cont_UNIT_LEARNING_CLSS0000057446_%s.xml"
@@ -129,10 +135,11 @@ class API_loading:
         from_ymd = from_day.strftime("%Y%m%d")
         to_day = today + timedelta(days=4 - weekday)
         to_ymd = to_day.strftime("%Y%m%d")
-        print((from_ymd, to_ymd))
+        
         class_nm = school_class
         input_list = [from_ymd, to_ymd, grade, class_nm]
         school_code_list.extend(input_list)
+        print(school_code_list)
         url_neis_api = (
             "https://open.neis.go.kr/hub/misTimetable?KEY=c14de8bbaf5d4856abb43baeb6383d30&Type=json&plndex=1&pSize=100&ATPT_OFCDC_SC_CODE=%s&SD_SCHUL_CODE=%s&TI_FROM_YMD=%s&TI_TO_YMD=%s&GRADE=%s&CLASS_NM=%s"
             % tuple(school_code_list)
@@ -165,4 +172,4 @@ class API_loading:
 
             print(timetable)
 
-            return timetable
+            return timetable, from_day, to_day
