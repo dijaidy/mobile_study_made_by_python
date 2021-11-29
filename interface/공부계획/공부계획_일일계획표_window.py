@@ -14,10 +14,13 @@ from interface.공부계획.알리미_window import show_message
 class 일일공부계획_window(공부계획_manage_user_information, 찜한교재_manage_user_information):
     def __init__(self, planning_day):
         super(일일공부계획_window, self).__init__()
+        
         # 창 설정
         self.window = Tk()
         self.window.title("일일공부계획")
         self.window.geometry("400x800")
+        self.window.resizable(width=False, height=False)
+        
         self.canvas=Canvas(self.window, width=400, height=400)  #트킨터에서 도형을 그리기 위한 바탕 설정
         self.canvas.place(x=0, y=0)
         self.tlrksvy=Message(self.window, font=("배달의민족 주아", 13), text="시간표")

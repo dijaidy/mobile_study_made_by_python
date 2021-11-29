@@ -40,6 +40,8 @@ class start_window:
         self.window = Tk()
         self.window.title("MOBILE STUDY")
         self.window.geometry("400x800")
+        
+        self.window.resizable(width=False, height=False)
 
         # 닉네임
         self.nickname = str(login)
@@ -109,7 +111,6 @@ class start_window:
         self.sub_menu_1.place(y=400, height=50, relx=0, relwidth=2 / 5)
         self.sub_menu_2.place(y=470, height=50, relx=0, relwidth=2 / 5)
 
-        self.window.resizable(width=False, height=False)
         self.window.mainloop()
 
         # 파일 저장하기
@@ -161,7 +162,7 @@ class start_window:
         오늘의공부_window()
 
     def show_학교수업복습_window(self):
-        학교수업복습_window()
+        학교수업복습_window(self.nickname)
 
     def show_커뮤니티_submenu(self):
         self.sub_menu_1["text"] = "스터디 그룹 >"

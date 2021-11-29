@@ -110,20 +110,19 @@ class API_loading:
             print("에듀넷 api 입력 오류")
             return 0
 
-    def return_school_code(self):  # 학교 이름 입력 시 학교 코드 리턴
+    def return_school_code(self, school):  # 학교 이름 입력 시 학교 코드 리턴
         input_file = "information\학교_코드_dict.json"
 
-        school_name = input("학교 이름을 입력하세요 >")
+        school_name = school
 
         with open(input_file, "r", encoding="utf-8") as in_file:
             json_data = json.load(in_file)
             school_code_list = json_data[school_name]
 
-        print(school_code_list)
         return school_code_list
 
-    def load_school_timetable(self):  # 학교, 학년, 반 입력 시 시간표 반환(바뀐 시간표까지 적용)
-        school_code_list = self.return_school_code()
+    def load_school_timetable(self, school, grade, school_class):  # 학교, 학년, 반 입력 시 시간표 반환(바뀐 시간표까지 적용)
+        school_code_list = self.return_school_code(school)
         today = datetime.today()
         weekday = today.weekday()
         from_day = today - timedelta(days=weekday)
@@ -131,8 +130,7 @@ class API_loading:
         to_day = today + timedelta(days=4 - weekday)
         to_ymd = to_day.strftime("%Y%m%d")
         print((from_ymd, to_ymd))
-        grade = input("학년 입력> ")
-        class_nm = input("반 입력> ")
+        class_nm = school_class
         input_list = [from_ymd, to_ymd, grade, class_nm]
         school_code_list.extend(input_list)
         url_neis_api = (
