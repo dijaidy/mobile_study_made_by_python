@@ -7,6 +7,7 @@ import json
 
 
 
+
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from information_management.api_loading import API_loading
 
@@ -92,12 +93,12 @@ class start_window:
         self.menu_공부방.place(y=150, height=50, relx=2 / 5, relwidth=1 / 5)
 
         self.menu_커뮤니티 = Button(
-            self.window, text="커뮤니티", font=menu_font, bg="red", command=self.show_커뮤니티_submenu
+            self.window, text="커뮤니티", font=menu_font, fg="grey", command=self.show_커뮤니티_submenu
         )
         self.menu_커뮤니티.place(y=150, height=50, relx=3 / 5, relwidth=1 / 5)
 
         self.menu_현재성과 = Button(
-            self.window, text="나의 성과", font=menu_font, bg="red", command=self.show_현재성과_submenu
+            self.window, text="나의 성과", font=menu_font, fg='grey', command=self.show_현재성과_submenu
         )
         self.menu_현재성과.place(y=150, height=50, relx=4 / 5, relwidth=1 / 5)
 
@@ -110,6 +111,9 @@ class start_window:
         )
         self.sub_menu_1.place(y=400, height=50, relx=0, relwidth=2 / 5)
         self.sub_menu_2.place(y=470, height=50, relx=0, relwidth=2 / 5)
+
+        self.log_out_button = Button(self.window, text='로그 아웃', font=submenu_font, command=self.log_out)
+        self.log_out_button.place(x=260, y=710, width=100, height=50)
 
         self.window.mainloop()
 
@@ -124,14 +128,16 @@ class start_window:
 
 
 
+
+
     # sub_menu_띄우는 함수 + sub_menu 해당 윈도우 띄우는 함수
     def show_내교재찜하기_submenu(self):
         self.sub_menu_1["text"] = "교재선택 >"
         self.sub_menu_2["text"] = "찜한교재목록 >"
         self.sub_menu_1["command"] = self.show_교재선택_window
         self.sub_menu_2["command"] = self.show_찜한교재목록_window
-        self.sub_menu_1["bg"] = "Grey93"
-        self.sub_menu_2["bg"] = "Grey93"
+        self.sub_menu_1["fg"] = "black"
+        self.sub_menu_2["fg"] = "black"
 
     def show_교재선택_window(self):
         교재선택_window()
@@ -144,8 +150,8 @@ class start_window:
         self.sub_menu_2["text"] = ""
         self.sub_menu_1["command"] = self.show_공부계획_window
         self.sub_menu_2["command"] = ""
-        self.sub_menu_1["bg"] = "Grey93"
-        self.sub_menu_2["bg"] = "Grey93"
+        self.sub_menu_1["fg"] = "black"
+        self.sub_menu_2["fg"] = "black"
 
     def show_공부계획_window(self):
         공부계획_window()
@@ -155,8 +161,8 @@ class start_window:
         self.sub_menu_2["text"] = "학교 수업 복습 >"
         self.sub_menu_1["command"] = self.show_오늘의공부_window
         self.sub_menu_2["command"] = self.show_학교수업복습_window
-        self.sub_menu_1["bg"] = "Grey93"
-        self.sub_menu_2["bg"] = "Grey93"
+        self.sub_menu_1["fg"] = "black"
+        self.sub_menu_2["fg"] = "black"
 
     def show_오늘의공부_window(self):
         오늘의공부_window()
@@ -169,8 +175,8 @@ class start_window:
         self.sub_menu_2["text"] = "유저 정보 >"
         self.sub_menu_1["command"] = self.show_스터디그룹_window
         self.sub_menu_2["command"] = self.show_학교정보_window
-        self.sub_menu_1["bg"] = "red"
-        self.sub_menu_2["bg"] = "red"
+        self.sub_menu_1["fg"] = "grey"
+        self.sub_menu_2["fg"] = "grey"
 
     def show_스터디그룹_window(self):
         스터디그룹_window()
@@ -183,14 +189,18 @@ class start_window:
         self.sub_menu_2["text"] = "랭킹 >"
         self.sub_menu_1["command"] = self.show_학습통계_window
         self.sub_menu_2["command"] = self.show_랭킹_window
-        self.sub_menu_1["bg"] = "red"
-        self.sub_menu_2["bg"] = "red"
+        self.sub_menu_1["fg"] = "grey"
+        self.sub_menu_2["fg"] = "grey"
 
     def show_학습통계_window(self):
         학습통계_window()
 
     def show_랭킹_window(self):
         랭킹_window()
+    
+    def log_out(self):
+        self.window.destroy()
+        start_window()
 
 
 # sub_menu 윈도우 모두 모듈화시킴

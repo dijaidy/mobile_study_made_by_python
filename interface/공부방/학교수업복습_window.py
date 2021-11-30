@@ -32,9 +32,9 @@ class 학교수업복습_window:
         self.showing_date = self.today
 
         #요일
-        days = ['월', '화', '수', '목','금', '토', '일']
+        self.days = ['월', '화', '수', '목','금', '토', '일']
         self.week_nm = self.showing_date.weekday()
-        self.date_week = days[self.week_nm]
+        self.date_week = self.days[self.week_nm]
 
         # 날짜 표시
         self.showing_date_text = self.showing_date.strftime("오늘: %y.%m.%d("+self.date_week+')')
@@ -59,38 +59,33 @@ class 학교수업복습_window:
 
         # 시간표 프레임
         self.timetable_frame = Frame(self.window, width=400, bg='white')
-        self.timetable_frame.pack(side=TOP, anchor=N, fill=X, pady=(50,0))
+        self.timetable_frame.pack(side=TOP, anchor=N, fill=X, pady=(50,0))   
         
+        self.back_button = Button(self.window, text='뒤로가기', font=('배달의민족 주아', 15), anchor=CENTER, pady=10, command=self.back)
+        
+        self.timetable_frame2 = Frame(self.window, width=400, bg='white')
 
+        # 이번주 복습
+        self.title_label = Label(self.timetable_frame, font=('배달의민족 주아', 18), anchor=CENTER, pady=10, text = '복습하고자 하는 이번주 학교수업 찾기', bg='skyblue', fg='black')
+        self.title_label.pack(side=TOP, fill=X, padx=2, pady=2)
 
-        # 토~일 일때
-        if True:
-            # 이번주 복습
-            self.title_label = Label(self.timetable_frame, font=('배달의민족 주아', 18), anchor=CENTER, pady=10, text = '복습하고자 하는 이번주 학교수업 찾기', bg='skyblue', fg='black')
-            self.title_label.pack(side=TOP, fill=X, padx=2, pady=2)
+        # 시간표 표시 날짜
+        self.timetable_date = Label(self.timetable_frame, font=('배달의민족 주아', 17), anchor=CENTER, text=timetable_date_text, bg='skyblue', fg='white')
+        self.timetable_date.pack(side=TOP, anchor=N, fill=X, ipady=10, padx=2, pady=2)
+        
+        # 요일 표시
+        self.button_list = []
+        for i in range(0, 5):
+            date = self.days[i]
+            button = Button(self.timetable_frame, font=('배달의민족 주아', 15), anchor=CENTER, pady=10, text=date+'요일', bg='skyblue',fg='white', command=lambda x=i:self.present_selected_date_timetable(x, self.days[x]))
+            button.pack(side=LEFT, anchor=N, fill=X, expand=True, padx=2, pady=2)
+            self.button_list.append(button)
 
-            # 시간표 표시 날짜
-            self.timetable_date = Label(self.timetable_frame, font=('배달의민족 주아', 17), anchor=CENTER, text=timetable_date_text, bg='skyblue', fg='white')
-            self.timetable_date.pack(side=TOP, anchor=N, fill=X, ipady=10, padx=2, pady=2)
-            
-            # 요일 표시
-            self.button_list = []
-            for i in range(0, 5):
-                date = days[i]
-                button = Button(self.timetable_frame, font=('배달의민족 주아', 15), anchor=CENTER, pady=10, text=date+'요일', bg='skyblue',fg='white', command=lambda x=i:self.present_selected_date_timetable(x, days[x]))
-                button.pack(side=LEFT, anchor=N, fill=X, expand=True, padx=2, pady=2)
-                self.button_list.append(button)
-
-            self.label_list = []
-
-        # 월~금 일때
-        else:
-            pass
+        self.label_list = []
 
 
 
-        for i in range(1, 7+1):
-            Label(self.timetable_frame, font=('배달의민족 주아', 15), anchor=CENTER, text='')
+
 
 
 
@@ -102,39 +97,47 @@ class 학교수업복습_window:
         for i in range(0, 5):
             self.button_list[i].destroy()
 
-        # 제목바꾸기
-        self.title_label.config(text='복습하고자 하는 학교수업 선택')
+        # 뒤로가기 버튼
+        self.back_button.pack(side=TOP, anchor=N, fill=X)
 
-        self.timetable_frame.pack(side=TOP, anchor=N, fill=X, pady=(10, 0))
+        # 제목바꾸기
+
+        
+        # 프레임 전환
+        self.timetable_frame.pack_forget()
+        self.timetable_frame2 = Frame(self.window, width=400, bg='white')
+        self.timetable_frame2.pack(side=TOP, anchor=N, fill=X, pady=(10, 0))
+        self.title_label2 = Label(self.timetable_frame2, font=('배달의민족 주아', 18), anchor=CENTER, pady=10, text = '복습하고자 하는 학교수업 선택', bg='skyblue', fg='black')
+        self.title_label2.pack(side=TOP, fill=X, padx=2, pady=2)
 
         timetable_date_text = self.from_day_original + timedelta(days=week_nm)
         timetable_date_text = timetable_date_text.strftime('%y.%m.%d('+date+')')
         self.timetable_date.config(text = timetable_date_text + '  시간표')
 
         #시간표 띄우기
-        self.school_timetable = self.school_timetable[date]   
-        self.timetable_frame_list = [] 
+        self.school_timetable2 = self.school_timetable[date]   
+        self.timetable_frame2_list = [] 
         self.timetable_list = []
         
         for i in range(1, 8):
 
-            timetable_frame = Frame(self.timetable_frame, width=400, bg='white')
-            timetable_frame.pack(side=TOP, anchor=N, fill=X, pady=2)
-            self.timetable_frame_list.append(timetable_frame)
+            timetable_frame2 = Frame(self.timetable_frame2, width=400, bg='white')
+            timetable_frame2.pack(side=TOP, anchor=N, fill=X, pady=2)
+            self.timetable_frame2_list.append(timetable_frame2)
 
 
             # 교시
-            Label(self.timetable_frame_list[i-1], font=('배달의민족 주아', 17), anchor=CENTER, text=str(i), bg='skyblue', fg='white', width=10)\
+            Label(self.timetable_frame2_list[i-1], font=('배달의민족 주아', 17), anchor=CENTER, text=str(i), bg='skyblue', fg='white', width=10)\
                 .pack(side=LEFT, anchor=N, fill=BOTH, padx=2, ipady=10)
 
             # 수업
-            if str(i) in self.school_timetable:
-                text = self.school_timetable[str(i)].replace('-', '')
-                lesson = Button(self.timetable_frame_list[i-1], font=('배달의민족 주아', 17), anchor=CENTER, text=text, bg='skyblue', fg='white', command=lambda x=i: self.open_edunet(self.school_timetable[str(x)].replace('-', '')))
+            if str(i) in self.school_timetable2:
+                text = self.school_timetable2[str(i)].replace('-', '')
+                lesson = Button(self.timetable_frame2_list[i-1], font=('배달의민족 주아', 17), anchor=CENTER, text=text, bg='skyblue', fg='white', command=lambda x=i: self.open_edunet(self.school_timetable2[str(x)].replace('-', '')))
                 lesson.pack(side=LEFT, anchor=N, fill=BOTH, expand=True, padx=2, ipady=10)
             else:
                 text = '수업없음'
-                lesson = Button(self.timetable_frame_list[i-1], font=('배달의민족 주아', 17), anchor=CENTER, text=text, bg='skyblue', fg='white')
+                lesson = Button(self.timetable_frame2_list[i-1], font=('배달의민족 주아', 17), anchor=CENTER, text=text, bg='skyblue', fg='white')
                 lesson.pack(side=LEFT, anchor=N, fill=BOTH, expand=True, padx=2, ipady=10)
                 
     def open_edunet(self, subject):
@@ -146,6 +149,17 @@ class 학교수업복습_window:
             else:
                 print("해당 과목은 복습을 지원하지 않음.")
 
+    def back(self):
+        self.timetable_frame2.destroy()
+        self.timetable_frame.pack(side=TOP, anchor=N, fill=X, pady=(50,0))
+        self.back_button.pack_forget()
+        # 요일 표시
+        self.button_list = []
+        for i in range(0, 5):
+            date = self.days[i]
+            button = Button(self.timetable_frame, font=('배달의민족 주아', 15), anchor=CENTER, pady=10, text=date+'요일', bg='skyblue',fg='white', command=lambda x=i:self.present_selected_date_timetable(x, self.days[x]))
+            button.pack(side=LEFT, anchor=N, fill=X, expand=True, padx=2, pady=2)
+            self.button_list.append(button)
 
 
 

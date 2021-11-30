@@ -67,7 +67,7 @@ class 찜한교재목록_window(찜한교재_manage_user_information):
             font=("배달의민족 주아", 12),
             justify=CENTER,
             anchor=CENTER,
-            text="과목",
+            text="교재종류",
             width=200,)
         self.book_type_text.place(x=133, y=60, width=133, height=20)
 
