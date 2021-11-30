@@ -129,4 +129,3 @@ class users_information_manage:
     def call_users_information_from_file(self):  # 파일 불러오기
         with open("information\plan_list_file.json", "r", encoding="UTF-8") as out_file:
             return json.load(out_file)
-
